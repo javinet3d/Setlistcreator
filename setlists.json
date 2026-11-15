@@ -1,7 +1,7 @@
 {
   "version": "2.0",
-  "updatedAt": "2026-11-15T11:35:17.272Z",
-  "activeBand": "april_crew",
+  "updatedAt": "2026-11-15T11:36:49.905Z",
+  "activeBand": "local_13",
   "bands": {
     "april_crew": {
       "activeSetlistId": "list_1794742483645_436",
@@ -299,7 +299,7 @@
       }
     },
     "local_13": {
-      "activeSetlistId": "list_1794742023636_673",
+      "activeSetlistId": "list_1794742527546_344",
       "setlists": {
         "list_1794742023636_673": {
           "name": "Repertorio_Local_13_setlist (1)",
@@ -449,6 +449,137 @@
               "title": "Insurrección",
               "artist": "El último de la fila",
               "duration": 210,
+              "checked": true
+            }
+          ]
+        },
+        "list_1794742527546_344": {
+          "name": "Concierto_Local_13_La trinchera 16-10-2026",
+          "tracks": [
+            {
+              "id": 1794742527546,
+              "title": "No puedo vivir sin ti",
+              "artist": "Coque Malla",
+              "duration": 230,
+              "checked": true
+            },
+            {
+              "id": 1794742527547,
+              "title": "Años 80",
+              "artist": "Los Piratas",
+              "duration": 180,
+              "checked": true
+            },
+            {
+              "id": 1794742527548,
+              "title": "Sixteen",
+              "artist": "Leiva",
+              "duration": 210,
+              "checked": true
+            },
+            {
+              "id": 1794742527549,
+              "title": "En algún lugar",
+              "artist": "Duncan Dhu",
+              "duration": 236,
+              "checked": true
+            },
+            {
+              "id": 1794742527550,
+              "title": "Creep",
+              "artist": "Radiohead",
+              "duration": 188,
+              "checked": true
+            },
+            {
+              "id": 1794742527551,
+              "title": "Carolina",
+              "artist": "M",
+              "duration": 180,
+              "checked": true
+            },
+            {
+              "id": 1794742527552,
+              "title": "Terriblemente cruel",
+              "artist": "Leiva",
+              "duration": 208,
+              "checked": true
+            },
+            {
+              "id": 1794742527553,
+              "title": "Bajo la luz de la luna",
+              "artist": "Los Rebeldes",
+              "duration": 210,
+              "checked": true
+            },
+            {
+              "id": 1794742527554,
+              "title": "Maldito duende",
+              "artist": "Héroes del Silencio",
+              "duration": 278,
+              "checked": true
+            },
+            {
+              "id": 1794742527555,
+              "title": "Tren de largo recorrido",
+              "artist": "La Unión",
+              "duration": 155,
+              "checked": true
+            },
+            {
+              "id": 1794742527556,
+              "title": "A un minuto de ti",
+              "artist": "Duncan Dhu",
+              "duration": 252,
+              "checked": true
+            },
+            {
+              "id": 1794742527557,
+              "title": "Concierto salvaje",
+              "artist": "M",
+              "duration": 180,
+              "checked": true
+            },
+            {
+              "id": 1794742527558,
+              "title": "Jumping Jack Flash",
+              "artist": "The Rolling Stones",
+              "duration": 237,
+              "checked": true
+            },
+            {
+              "id": 1794742527559,
+              "title": "Vive y deja vivir",
+              "artist": "Local 13",
+              "duration": 260,
+              "checked": true
+            },
+            {
+              "id": 1794742527560,
+              "title": "Escuela de calor",
+              "artist": "Radio Futura",
+              "duration": 60,
+              "checked": true
+            },
+            {
+              "id": 1794742527561,
+              "title": "Soldadito marinero",
+              "artist": "Fito y Fitipaldis",
+              "duration": 243,
+              "checked": true
+            },
+            {
+              "id": 1794742527562,
+              "title": "A todo que sí",
+              "artist": "Los Zigarros",
+              "duration": 225,
+              "checked": true
+            },
+            {
+              "id": 1794742527563,
+              "title": "Manager Blues",
+              "artist": "Revolver",
+              "duration": 283,
               "checked": true
             }
           ]
