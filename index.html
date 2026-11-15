@@ -50,7 +50,7 @@
 
       <!-- DERECHA: ESTADO, DESHACER, GUARDAR, TEMA Y MENÚ -->
       <div class="flex items-center gap-1 sm:gap-1.5 shrink-0 ml-auto">
-        <!-- Indicador de Estado de Guardado -->
+        <!-- Indicador de Estado de Guardado / GitHub -->
         <span id="saveStatusBadge" class="text-[10px] sm:text-xs font-semibold px-2 py-1 rounded-md border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 transition-colors whitespace-nowrap">
           Guardado
         </span>
@@ -61,8 +61,8 @@
           <span class="hidden md:inline">Deshacer</span>
         </button>
 
-        <!-- Botón Guardar Manual -->
-        <button onclick="saveManual()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-2 sm:px-2.5 py-1.5 rounded-lg shadow flex items-center gap-1 active:scale-95 transition" title="Guardar en este dispositivo">
+        <!-- Botón Guardar (Local + GitHub si está configurado) -->
+        <button id="saveBtn" onclick="saveManual()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-2 sm:px-2.5 py-1.5 rounded-lg shadow flex items-center gap-1 active:scale-95 transition" title="Guardar cambios (Local + GitHub)">
           <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
           <span class="hidden sm:inline">Guardar</span>
         </button>
@@ -94,16 +94,24 @@
             </button>
 
             <div class="border-t border-slate-800 my-1"></div>
-            <div class="px-3 py-1 text-[10px] uppercase font-bold text-emerald-400/90">Base de Datos Servidor (setlists.json)</div>
+            <div class="px-3 py-1 flex items-center justify-between text-[10px] uppercase font-bold text-emerald-400/90">
+              <span>Sincronización GitHub</span>
+              <span id="ghMenuStatusDot" class="w-2 h-2 rounded-full bg-slate-600" title="Estado de GitHub"></span>
+            </div>
 
-            <button onclick="downloadServerJson()" class="w-full text-left px-3 py-2 hover:bg-slate-800 flex items-start gap-2 text-slate-200">
-              <svg class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
-              <span class="leading-tight">Descargar setlists.json <span class="block text-[10px] text-slate-400">Para subir a la carpeta del servidor</span></span>
+            <button onclick="openGithubModal()" class="w-full text-left px-3 py-2 hover:bg-slate-800 flex items-start gap-2 text-slate-200">
+              <svg class="w-4 h-4 text-purple-400 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path></svg>
+              <span class="leading-tight">Configurar GitHub <span id="ghMenuRepoLabel" class="block text-[10px] text-slate-400">No configurado</span></span>
             </button>
 
-            <button onclick="syncFromServerJson(false)" class="w-full text-left px-3 py-2 hover:bg-slate-800 flex items-start gap-2 text-slate-200">
+            <button onclick="syncFromGithub(false)" class="w-full text-left px-3 py-2 hover:bg-slate-800 flex items-start gap-2 text-slate-200">
               <svg class="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-              <span class="leading-tight">Cargar desde ./setlists.json</span>
+              <span class="leading-tight">Sincronizar desde GitHub <span class="block text-[10px] text-slate-400">Descargar última versión</span></span>
+            </button>
+
+            <button onclick="downloadServerJson()" class="w-full text-left px-3 py-2 hover:bg-slate-800 flex items-center gap-2 text-slate-200">
+              <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+              <span>Descargar copia setlists.json</span>
             </button>
 
             <button onclick="triggerJsonBackupImport()" class="w-full text-left px-3 py-2 hover:bg-slate-800 flex items-center gap-2 text-slate-200">
@@ -119,7 +127,7 @@
             </button>
 
             <button onclick="window.print(); hideDropdownMenu();" class="w-full text-left px-3 py-2 hover:bg-slate-800 flex items-center gap-2 text-slate-200">
-              <svg class="w-4 h-4 text-purple-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4H7v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+              <svg class="w-4 h-4 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4H7v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
               <span>Imprimir / PDF</span>
             </button>
           </div>
@@ -189,6 +197,64 @@
   <input type="file" id="txtFileInput" accept=".txt" multiple class="hidden" onchange="handleTxtFilesSelected(event)">
   <input type="file" id="jsonFileInput" accept=".json,application/json" class="hidden" onchange="handleJsonBackupSelected(event)">
 
+  <!-- MODAL: CONFIGURACIÓN DE GITHUB API -->
+  <div id="githubModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3">
+    <div class="bg-slate-900 border border-slate-700 w-full max-w-md rounded-xl shadow-2xl p-4 flex flex-col max-h-[90vh]">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+        <div class="flex items-center gap-2">
+          <svg class="w-5 h-5 text-emerald-400" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path></svg>
+          <h3 class="font-bold text-sm text-slate-100">Conectar Repositorio GitHub</h3>
+        </div>
+        <button onclick="closeGithubModal()" class="text-slate-400 hover:text-white text-xl leading-none px-1">&times;</button>
+      </div>
+
+      <div class="my-3 space-y-2.5 overflow-y-auto pr-1 custom-scrollbar text-xs">
+        <p class="text-[11px] text-slate-400 leading-relaxed bg-slate-950/70 border border-slate-800 rounded-lg p-2.5">
+          Guarda tus repertorios directamente en <code class="text-emerald-400">setlists.json</code> dentro de tu repositorio de GitHub cada vez que pulses <strong>Guardar</strong>. Tu token se almacena únicamente en este navegador.
+        </p>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-slate-400 mb-1">Usuario / Organización</label>
+            <input type="text" id="ghOwnerInput" placeholder="ej: tu-usuario" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white focus:ring-1 focus:ring-emerald-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1">Repositorio</label>
+            <input type="text" id="ghRepoInput" placeholder="ej: setlist-manager" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white focus:ring-1 focus:ring-emerald-500 focus:outline-none">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-slate-400 mb-1">Rama (Branch)</label>
+            <input type="text" id="ghBranchInput" value="main" placeholder="main" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white focus:ring-1 focus:ring-emerald-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1">Ruta del archivo</label>
+            <input type="text" id="ghPathInput" value="setlists.json" placeholder="setlists.json" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white font-mono focus:ring-1 focus:ring-emerald-500 focus:outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-slate-400 mb-1">Personal Access Token (Fine-grained: Contents Read &amp; Write)</label>
+          <input type="password" id="ghTokenInput" placeholder="github_pat_..." class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white font-mono focus:ring-1 focus:ring-emerald-500 focus:outline-none">
+        </div>
+
+        <div id="ghModalFeedback" class="hidden text-[11px] rounded-lg p-2 border"></div>
+      </div>
+
+      <div class="pt-3 border-t border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs">
+        <button onclick="clearGithubConfig()" class="text-rose-400 hover:text-rose-300 px-2 py-1.5 rounded text-[11px]">Desconectar</button>
+        <div class="flex items-center gap-2 ml-auto">
+          <button onclick="closeGithubModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg">Cancelar</button>
+          <button id="ghSaveTestBtn" onclick="saveAndTestGithubConfig()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg font-medium flex items-center gap-1.5">
+            <span>Guardar y probar</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL: GESTIÓN DE REPERTORIOS -->
   <div id="setlistsModal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-3">
     <div class="bg-slate-900 border border-slate-700 w-full max-w-md rounded-xl shadow-2xl p-4 flex flex-col max-h-[88vh]">
@@ -206,17 +272,20 @@
         <!-- Render dinámico -->
       </div>
 
-      <!-- SECCIÓN SERVIDOR EN MODAL -->
+      <!-- SECCIÓN GITHUB / SERVIDOR EN MODAL -->
       <div class="mt-3 pt-3 border-t border-slate-800/90 space-y-2 text-xs">
-        <div class="text-[10px] uppercase font-bold text-emerald-400 tracking-wider">Base de Datos Servidor (setlists.json)</div>
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] uppercase font-bold text-emerald-400 tracking-wider">Sincronización GitHub / Respaldo</span>
+          <button onclick="closeSetlistsModal(); openGithubModal();" class="text-[10px] text-purple-400 hover:text-purple-300 underline">Configurar GitHub</button>
+        </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+          <button onclick="syncFromGithub(false)" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-cyan-300 px-2.5 py-1.5 rounded-lg text-[11px] font-medium flex items-center justify-center gap-1.5 transition">
+            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+            <span>Cargar de GitHub</span>
+          </button>
           <button onclick="downloadServerJson()" class="bg-emerald-950/60 hover:bg-emerald-900/60 border border-emerald-700/50 text-emerald-300 px-2.5 py-1.5 rounded-lg text-[11px] font-medium flex items-center justify-center gap-1.5 transition">
             <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
             <span>Descargar setlists.json</span>
-          </button>
-          <button onclick="syncFromServerJson(false)" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-cyan-300 px-2.5 py-1.5 rounded-lg text-[11px] font-medium flex items-center justify-center gap-1.5 transition">
-            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-            <span>Cargar del servidor</span>
           </button>
         </div>
         <button onclick="triggerJsonBackupImport()" class="w-full bg-slate-950/80 hover:bg-slate-800 border border-slate-800 text-slate-300 px-2.5 py-1.5 rounded-lg text-[11px] flex items-center justify-center gap-1.5 transition">
@@ -338,6 +407,9 @@
     };
 
     // ESTADO DE LA APLICACIÓN
+    const LOCAL_DATA_KEY = 'BAND_SETLIST_DATA_V2';
+    const GITHUB_CFG_KEY = 'BAND_SETLIST_GITHUB_CFG_V1';
+
     let currentBandKey = "april_crew";
     let appData = null;
     let isModified = false;
@@ -345,6 +417,7 @@
     const MAX_UNDO_HISTORY = 30;
     let toastTimeout = null;
     let editingSetlistId = null;
+    let isSavingToGithub = false;
 
     // INICIALIZACIÓN
     window.addEventListener('DOMContentLoaded', async () => {
@@ -355,10 +428,14 @@
       updateMetrics();
       setModifiedStatus(false);
       updateUndoButtonUI();
+      updateGithubMenuIndicator();
 
-      // Si no hay datos locales previos guardados en este dispositivo, intenta cargar ./setlists.json del servidor
-      if (!hadLocalData) {
-        await syncFromServerJson(true);
+      // Sincronización automática con GitHub si está configurado, o fallback a ./setlists.json si es un navegador nuevo
+      const ghCfg = getGithubConfig();
+      if (ghCfg && ghCfg.owner && ghCfg.repo && ghCfg.token) {
+        await syncFromGithub(true);
+      } else if (!hadLocalData) {
+        await syncFromStaticServerJson();
       }
 
       // Cierre de dropdown al hacer clic fuera
@@ -401,7 +478,7 @@
       if (toastTimeout) clearTimeout(toastTimeout);
       toastTimeout = setTimeout(() => {
         toast.classList.add('hidden');
-      }, 3200);
+      }, 3600);
     }
 
     function openConfirmDialog(title, message) {
@@ -424,6 +501,374 @@
         acceptBtn.onclick = () => cleanup(true);
         cancelBtn.onclick = () => cleanup(false);
       });
+    }
+
+    // UTILIDADES CODIFICACIÓN UTF-8 <-> BASE64 PARA API DE GITHUB
+    function utf8ToBase64(str) {
+      const bytes = new TextEncoder().encode(str);
+      let binString = '';
+      for (let i = 0; i < bytes.length; i++) {
+        binString += String.fromCharCode(bytes[i]);
+      }
+      return btoa(binString);
+    }
+
+    function base64ToUtf8(base64) {
+      const cleanBase64 = base64.replace(/\s+/g, '');
+      const binString = atob(cleanBase64);
+      const bytes = new Uint8Array(binString.length);
+      for (let i = 0; i < binString.length; i++) {
+        bytes[i] = binString.charCodeAt(i);
+      }
+      return new TextDecoder().decode(bytes);
+    }
+
+    // GESTIÓN DE CONFIGURACIÓN DE GITHUB
+    function getGithubConfig() {
+      try {
+        const raw = localStorage.getItem(GITHUB_CFG_KEY);
+        if (!raw) return null;
+        return JSON.parse(raw);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function saveGithubConfigObject(cfg) {
+      localStorage.setItem(GITHUB_CFG_KEY, JSON.stringify(cfg));
+      updateGithubMenuIndicator();
+    }
+
+    function updateGithubMenuIndicator() {
+      const cfg = getGithubConfig();
+      const dot = document.getElementById('ghMenuStatusDot');
+      const label = document.getElementById('ghMenuRepoLabel');
+      if (!dot || !label) return;
+
+      if (cfg && cfg.owner && cfg.repo && cfg.token) {
+        dot.className = "w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_#34d399]";
+        label.textContent = `${cfg.owner}/${cfg.repo} (${cfg.branch || 'main'})`;
+        label.className = "block text-[10px] text-emerald-400/90 truncate max-w-[180px]";
+      } else {
+        dot.className = "w-2 h-2 rounded-full bg-slate-600";
+        label.textContent = "No configurado";
+        label.className = "block text-[10px] text-slate-400";
+      }
+    }
+
+    function openGithubModal() {
+      hideDropdownMenu();
+      const cfg = getGithubConfig() || {};
+      document.getElementById('ghOwnerInput').value = cfg.owner || '';
+      document.getElementById('ghRepoInput').value = cfg.repo || '';
+      document.getElementById('ghBranchInput').value = cfg.branch || 'main';
+      document.getElementById('ghPathInput').value = cfg.path || 'setlists.json';
+      document.getElementById('ghTokenInput').value = cfg.token || '';
+
+      const fb = document.getElementById('ghModalFeedback');
+      fb.classList.add('hidden');
+      document.getElementById('githubModal').classList.remove('hidden');
+    }
+
+    function closeGithubModal() {
+      document.getElementById('githubModal').classList.add('hidden');
+    }
+
+    function clearGithubConfig() {
+      localStorage.removeItem(GITHUB_CFG_KEY);
+      document.getElementById('ghOwnerInput').value = '';
+      document.getElementById('ghRepoInput').value = '';
+      document.getElementById('ghBranchInput').value = 'main';
+      document.getElementById('ghPathInput').value = 'setlists.json';
+      document.getElementById('ghTokenInput').value = '';
+      updateGithubMenuIndicator();
+      const fb = document.getElementById('ghModalFeedback');
+      fb.textContent = "Conexión con GitHub eliminada de este navegador.";
+      fb.className = "text-[11px] rounded-lg p-2 border border-amber-500/40 bg-amber-500/10 text-amber-300";
+      fb.classList.remove('hidden');
+    }
+
+    async function saveAndTestGithubConfig() {
+      const owner = document.getElementById('ghOwnerInput').value.trim();
+      const repo = document.getElementById('ghRepoInput').value.trim();
+      const branch = document.getElementById('ghBranchInput').value.trim() || 'main';
+      const path = document.getElementById('ghPathInput').value.trim().replace(/^\/+/, '') || 'setlists.json';
+      const token = document.getElementById('ghTokenInput').value.trim();
+      const fb = document.getElementById('ghModalFeedback');
+      const btn = document.getElementById('ghSaveTestBtn');
+
+      if (!owner || !repo || !token) {
+        fb.textContent = "Completa Usuario, Repositorio y Personal Access Token.";
+        fb.className = "text-[11px] rounded-lg p-2 border border-rose-500/40 bg-rose-500/10 text-rose-300";
+        fb.classList.remove('hidden');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = `<span>Conectando...</span>`;
+
+      const cfg = { owner, repo, branch, path, token };
+
+      try {
+        // Comprobar acceso al repositorio y buscar si el archivo ya existe
+        const encodedPath = path.split('/').map(encodeURIComponent).join('/');
+        const url = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/contents/${encodedPath}?ref=${encodeURIComponent(branch)}`;
+        
+        const res = await fetch(url, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/vnd.github+json',
+            'X-GitHub-Api-Version': '2022-11-28'
+          }
+        });
+
+        if (res.status === 200) {
+          saveGithubConfigObject(cfg);
+          fb.textContent = `Conexión correcta. Archivo "${path}" encontrado en GitHub.`;
+          fb.className = "text-[11px] rounded-lg p-2 border border-emerald-500/40 bg-emerald-500/10 text-emerald-300";
+          fb.classList.remove('hidden');
+          showToast("GitHub conectado correctamente");
+        } else if (res.status === 404) {
+          // El archivo aún no existe: probar a crearlo con los repertorios actuales
+          saveGithubConfigObject(cfg);
+          const created = await pushToGithub(cfg, true);
+          if (created) {
+            fb.textContent = `Conexión correcta. Se ha creado "${path}" en tu repositorio.`;
+            fb.className = "text-[11px] rounded-lg p-2 border border-emerald-500/40 bg-emerald-500/10 text-emerald-300";
+            fb.classList.remove('hidden');
+          } else {
+            fb.textContent = "El repositorio o la rama no existen, o el token no tiene permisos de escritura (Contents: Read & Write).";
+            fb.className = "text-[11px] rounded-lg p-2 border border-rose-500/40 bg-rose-500/10 text-rose-300";
+            fb.classList.remove('hidden');
+          }
+        } else {
+          const errJson = await res.json().catch(() => ({}));
+          fb.textContent = `Error de GitHub (${res.status}): ${errJson.message || 'Verifica el usuario, repositorio y token.'}`;
+          fb.className = "text-[11px] rounded-lg p-2 border border-rose-500/40 bg-rose-500/10 text-rose-300";
+          fb.classList.remove('hidden');
+        }
+      } catch (err) {
+        fb.textContent = "Error de red al intentar conectar con api.github.com.";
+        fb.className = "text-[11px] rounded-lg p-2 border border-rose-500/40 bg-rose-500/10 text-rose-300";
+        fb.classList.remove('hidden');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<span>Guardar y probar</span>`;
+      }
+    }
+
+    // SUBIR DATOS DIRECTAMENTE A GITHUB (COMMIT AUTOMÁTICO)
+    async function pushToGithub(overrideCfg = null, silentToast = false) {
+      const cfg = overrideCfg || getGithubConfig();
+      if (!cfg || !cfg.owner || !cfg.repo || !cfg.token) return false;
+      if (isSavingToGithub) return false;
+
+      isSavingToGithub = true;
+      const badge = document.getElementById('saveStatusBadge');
+      if (badge) {
+        badge.textContent = "Subiendo...";
+        badge.className = "text-[10px] sm:text-xs font-semibold px-2 py-1 rounded-md border border-cyan-500/40 bg-cyan-500/10 text-cyan-300 transition-colors whitespace-nowrap";
+      }
+
+      try {
+        const branch = cfg.branch || 'main';
+        const path = (cfg.path || 'setlists.json').replace(/^\/+/, '');
+        const encodedPath = path.split('/').map(encodeURIComponent).join('/');
+        const baseUrl = `https://api.github.com/repos/${encodeURIComponent(cfg.owner)}/${encodeURIComponent(cfg.repo)}/contents/${encodedPath}`;
+
+        // 1. Obtener el SHA actual del archivo (si existe) para poder sobrescribirlo
+        let currentSha = null;
+        const getRes = await fetch(`${baseUrl}?ref=${encodeURIComponent(branch)}&_t=${Date.now()}`, {
+          headers: {
+            'Authorization': `Bearer ${cfg.token}`,
+            'Accept': 'application/vnd.github+json',
+            'X-GitHub-Api-Version': '2022-11-28'
+          }
+        });
+
+        if (getRes.status === 200) {
+          const fileMeta = await getRes.json();
+          currentSha = fileMeta.sha;
+        } else if (getRes.status !== 404) {
+          throw new Error(`HTTP ${getRes.status}`);
+        }
+
+        // 2. Preparar contenido JSON formateado
+        const payloadObj = {
+          version: "2.0",
+          updatedAt: new Date().toISOString(),
+          activeBand: currentBandKey,
+          bands: appData.bands
+        };
+        const jsonString = JSON.stringify(payloadObj, null, 2);
+        const contentBase64 = utf8ToBase64(jsonString);
+
+        const bodyData = {
+          message: `Actualizar setlists (${new Date().toLocaleString('es-ES')})`,
+          content: contentBase64,
+          branch: branch
+        };
+        if (currentSha) {
+          bodyData.sha = currentSha;
+        }
+
+        // 3. Hacer PUT a la API de GitHub
+        const putRes = await fetch(baseUrl, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${cfg.token}`,
+            'Accept': 'application/vnd.github+json',
+            'Content-Type': 'application/json',
+            'X-GitHub-Api-Version': '2022-11-28'
+          },
+          body: JSON.stringify(bodyData)
+        });
+
+        if (!putRes.ok) {
+          const errData = await putRes.json().catch(() => ({}));
+          throw new Error(errData.message || `Error HTTP ${putRes.status}`);
+        }
+
+        isModified = false;
+        setModifiedStatus(false);
+        if (!silentToast) {
+          showToast("Guardado en el navegador y en GitHub");
+        }
+        return true;
+      } catch (err) {
+        console.error("Error subiendo a GitHub:", err);
+        setModifiedStatus(true);
+        if (!silentToast) {
+          showToast(`Guardado local, pero falló GitHub: ${err.message}`, "error");
+        }
+        return false;
+      } finally {
+        isSavingToGithub = false;
+      }
+    }
+
+    // DESCARGAR DATOS DESDE GITHUB
+    async function syncFromGithub(isSilentAutoLoad = false) {
+      const cfg = getGithubConfig();
+      if (!cfg || !cfg.owner || !cfg.repo || !cfg.token) {
+        if (!isSilentAutoLoad) {
+          hideDropdownMenu();
+          openGithubModal();
+          showToast("Configura primero tu repositorio de GitHub", "warning");
+        }
+        return;
+      }
+
+      if (!isSilentAutoLoad) {
+        hideDropdownMenu();
+        if (isModified) {
+          const ok = await openConfirmDialog(
+            "Sincronizar desde GitHub",
+            "Tienes cambios sin guardar. Si descargas la versión de GitHub se sobrescribirán tus listas actuales (podrás volver atrás con Deshacer). ¿Continuar?"
+          );
+          if (!ok) return;
+        }
+      }
+
+      try {
+        const branch = cfg.branch || 'main';
+        const path = (cfg.path || 'setlists.json').replace(/^\/+/, '');
+        const encodedPath = path.split('/').map(encodeURIComponent).join('/');
+        const url = `https://api.github.com/repos/${encodeURIComponent(cfg.owner)}/${encodeURIComponent(cfg.repo)}/contents/${encodedPath}?ref=${encodeURIComponent(branch)}&_t=${Date.now()}`;
+
+        const res = await fetch(url, {
+          headers: {
+            'Authorization': `Bearer ${cfg.token}`,
+            'Accept': 'application/vnd.github+json',
+            'X-GitHub-Api-Version': '2022-11-28'
+          }
+        });
+
+        if (!res.ok) {
+          if (!isSilentAutoLoad) {
+            showToast(`No se pudo descargar de GitHub (HTTP ${res.status})`, "warning");
+          }
+          return;
+        }
+
+        const fileObj = await res.json();
+        if (!fileObj.content) return;
+
+        const decodedText = base64ToUtf8(fileObj.content);
+        const remoteData = JSON.parse(decodedText);
+        if (!remoteData || !remoteData.bands) {
+          if (!isSilentAutoLoad) {
+            showToast("El archivo de GitHub no tiene un formato válido.", "error");
+          }
+          return;
+        }
+
+        if (!isSilentAutoLoad) {
+          pushUndoSnapshot();
+        }
+
+        applyImportedAppData(remoteData);
+        localStorage.setItem(LOCAL_DATA_KEY, JSON.stringify(appData));
+        isModified = false;
+        setModifiedStatus(false);
+
+        showToast(isSilentAutoLoad ? "Sincronizado con GitHub" : "Repertorios actualizados desde GitHub");
+      } catch (err) {
+        console.error("Error leyendo desde GitHub:", err);
+        if (!isSilentAutoLoad) {
+          showToast("Error al sincronizar con GitHub", "error");
+        }
+      }
+    }
+
+    // Fallback estático por si se abre sin configurar token pero existe ./setlists.json público
+    async function syncFromStaticServerJson() {
+      try {
+        const response = await fetch('./setlists.json', { cache: 'no-store' });
+        if (!response.ok) return;
+        const remoteData = await response.json();
+        if (!remoteData || !remoteData.bands) return;
+
+        applyImportedAppData(remoteData);
+        localStorage.setItem(LOCAL_DATA_KEY, JSON.stringify(appData));
+        isModified = false;
+        setModifiedStatus(false);
+        showToast("Listas iniciales cargadas desde setlists.json");
+      } catch (e) {
+        // Silencioso si no existe archivo estático
+      }
+    }
+
+    function applyImportedAppData(remoteData) {
+      appData = {
+        activeBand: remoteData.activeBand || currentBandKey || "april_crew",
+        bands: remoteData.bands
+      };
+
+      Object.keys(BAND_DATA).forEach(bKey => {
+        if (!appData.bands[bKey]) {
+          appData.bands[bKey] = {
+            activeSetlistId: "default_" + bKey,
+            setlists: {
+              ["default_" + bKey]: {
+                name: "Repertorio Principal",
+                tracks: JSON.parse(JSON.stringify(BAND_DATA[bKey].defaultSetlist))
+              }
+            }
+          };
+        }
+      });
+
+      currentBandKey = appData.activeBand;
+      document.getElementById('bandSelect').value = currentBandKey;
+      renderBandVisuals();
+      populateSetlistDropdown();
+      renderTrackList();
+      updateMetrics();
+
+      if (!document.getElementById('setlistsModal').classList.contains('hidden')) {
+        renderModalSetlists();
+      }
     }
 
     // PILA DE HISTORIAL PARA DESHACER (UNDO)
@@ -489,7 +934,7 @@
 
     function loadInitialData() {
       let hasStoredData = false;
-      const stored = localStorage.getItem('BAND_SETLIST_DATA_V2');
+      const stored = localStorage.getItem(LOCAL_DATA_KEY);
       if (stored) {
         try {
           const parsed = JSON.parse(stored);
@@ -541,7 +986,7 @@
       return hasStoredData;
     }
 
-    // SINCRONIZACIÓN Y BACKUP CON ARCHIVO MAESTRO DEL SERVIDOR (setlists.json)
+    // DESCARGA E IMPORTACIÓN MANUAL DE BACKUP JSON
     function downloadServerJson() {
       hideDropdownMenu();
       try {
@@ -559,85 +1004,9 @@
         a.download = 'setlists.json';
         a.click();
         URL.revokeObjectURL(url);
-        showToast("Archivo setlists.json descargado. Súbelo junto a tu web.");
+        showToast("Archivo setlists.json descargado");
       } catch (e) {
         showToast("Error al generar setlists.json", "error");
-      }
-    }
-
-    async function syncFromServerJson(isSilentAutoLoad = false) {
-      if (!isSilentAutoLoad) {
-        hideDropdownMenu();
-        if (isModified) {
-          const ok = await openConfirmDialog(
-            "Cargar desde el servidor",
-            "Tienes cambios sin guardar en este navegador. Si cargas setlists.json desde el servidor se reemplazarán tus listas actuales (podrás volver atrás con Deshacer). ¿Continuar?"
-          );
-          if (!ok) return;
-        }
-      }
-
-      try {
-        const response = await fetch('./setlists.json', { cache: 'no-store' });
-        if (!response.ok) {
-          if (!isSilentAutoLoad) {
-            showToast("No se encontró setlists.json en la carpeta del servidor.", "warning");
-          }
-          return;
-        }
-
-        const remoteData = await response.json();
-        if (!remoteData || !remoteData.bands) {
-          if (!isSilentAutoLoad) {
-            showToast("El archivo setlists.json del servidor no tiene un formato válido.", "error");
-          }
-          return;
-        }
-
-        if (!isSilentAutoLoad) {
-          pushUndoSnapshot();
-        }
-
-        appData = {
-          activeBand: remoteData.activeBand || currentBandKey || "april_crew",
-          bands: remoteData.bands
-        };
-
-        Object.keys(BAND_DATA).forEach(bKey => {
-          if (!appData.bands[bKey]) {
-            appData.bands[bKey] = {
-              activeSetlistId: "default_" + bKey,
-              setlists: {
-                ["default_" + bKey]: {
-                  name: "Repertorio Principal",
-                  tracks: JSON.parse(JSON.stringify(BAND_DATA[bKey].defaultSetlist))
-                }
-              }
-            };
-          }
-        });
-
-        currentBandKey = appData.activeBand;
-        document.getElementById('bandSelect').value = currentBandKey;
-        renderBandVisuals();
-        populateSetlistDropdown();
-        renderTrackList();
-        updateMetrics();
-
-        if (!document.getElementById('setlistsModal').classList.contains('hidden')) {
-          renderModalSetlists();
-        }
-
-        saveManual();
-        if (!isSilentAutoLoad) {
-          showToast("Repertorios sincronizados desde setlists.json");
-        } else {
-          showToast("Listas cargadas desde setlists.json del servidor");
-        }
-      } catch (err) {
-        if (!isSilentAutoLoad) {
-          showToast("No se pudo conectar con ./setlists.json en el servidor.", "warning");
-        }
       }
     }
 
@@ -664,39 +1033,9 @@
           }
 
           pushUndoSnapshot();
-
-          appData = {
-            activeBand: parsed.activeBand || currentBandKey || "april_crew",
-            bands: parsed.bands
-          };
-
-          Object.keys(BAND_DATA).forEach(bKey => {
-            if (!appData.bands[bKey]) {
-              appData.bands[bKey] = {
-                activeSetlistId: "default_" + bKey,
-                setlists: {
-                  ["default_" + bKey]: {
-                    name: "Repertorio Principal",
-                    tracks: JSON.parse(JSON.stringify(BAND_DATA[bKey].defaultSetlist))
-                  }
-                }
-              };
-            }
-          });
-
-          currentBandKey = appData.activeBand;
-          document.getElementById('bandSelect').value = currentBandKey;
-          renderBandVisuals();
-          populateSetlistDropdown();
-          renderTrackList();
-          updateMetrics();
+          applyImportedAppData(parsed);
           markAsModified();
-
-          if (!document.getElementById('setlistsModal').classList.contains('hidden')) {
-            renderModalSetlists();
-          }
-
-          showToast("Copia de seguridad JSON restaurada correctamente");
+          showToast("Copia de seguridad JSON restaurada");
         } catch (err) {
           showToast("Error al leer el archivo JSON.", "error");
         }
@@ -741,7 +1080,7 @@
       }
     }
 
-    // CONTROL DE ESTADO MANUAL Y GUARDADO
+    // CONTROL DE ESTADO MANUAL Y GUARDADO (LOCAL + GITHUB)
     function markAsModified() {
       isModified = true;
       setModifiedStatus(true);
@@ -749,6 +1088,7 @@
 
     function setModifiedStatus(modified) {
       const badge = document.getElementById('saveStatusBadge');
+      if (!badge) return;
       if (modified) {
         badge.textContent = "Modificado";
         badge.className = "text-[10px] sm:text-xs font-semibold px-2 py-1 rounded-md border border-amber-500/40 bg-amber-500/10 text-amber-400 transition-colors animate-pulse whitespace-nowrap";
@@ -758,15 +1098,22 @@
       }
     }
 
-    function saveManual() {
+    async function saveManual() {
       try {
-        localStorage.setItem('BAND_SETLIST_DATA_V2', JSON.stringify(appData));
-        isModified = false;
-        setModifiedStatus(false);
-        showToast("Cambios guardados en este navegador");
+        localStorage.setItem(LOCAL_DATA_KEY, JSON.stringify(appData));
       } catch (err) {
         console.error("Error al guardar en el navegador:", err);
         showToast("Error al guardar en el navegador", "error");
+        return;
+      }
+
+      const ghCfg = getGithubConfig();
+      if (ghCfg && ghCfg.owner && ghCfg.repo && ghCfg.token) {
+        await pushToGithub(ghCfg, false);
+      } else {
+        isModified = false;
+        setModifiedStatus(false);
+        showToast("Guardado localmente (Configura GitHub en ⋮ para subir a la nube)");
       }
     }
 
