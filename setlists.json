@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "updatedAt": "2026-11-15T11:30:55.563Z",
+  "updatedAt": "2026-11-15T11:33:04.425Z",
   "activeBand": "underground_escape",
   "bands": {
     "april_crew": {
@@ -429,31 +429,17 @@
               "checked": true
             },
             {
-              "id": 1794741980210,
-              "title": "Creep",
-              "artist": "Radiohead",
-              "duration": 239,
+              "id": 1794742290068,
+              "title": "El ritmo del garaje",
+              "artist": "Loquillo y los Trogloditas",
+              "duration": 200,
               "checked": true
             },
             {
-              "id": 1794741980212,
-              "title": "No puedo vivir sin ti",
-              "artist": "Coque Malla",
-              "duration": 214,
-              "checked": true
-            },
-            {
-              "id": 1794741980218,
-              "title": "En algún lugar",
-              "artist": "Duncan Dhu",
-              "duration": 237,
-              "checked": true
-            },
-            {
-              "id": 1794741980219,
-              "title": "Aquella tarde",
-              "artist": "Underground Escape",
-              "duration": 210,
+              "id": 1794741980226,
+              "title": "Desire",
+              "artist": "U2",
+              "duration": 179,
               "checked": true
             },
             {
@@ -464,10 +450,10 @@
               "checked": true
             },
             {
-              "id": 1794741980222,
-              "title": "Highway to Hell",
-              "artist": "AC/DC",
-              "duration": 208,
+              "id": 1794741980225,
+              "title": "El fin del mundo",
+              "artist": "La La Love You",
+              "duration": 218,
               "checked": true
             },
             {
@@ -480,22 +466,43 @@
             {
               "id": 1794741980224,
               "title": "Porque te vas",
-              "artist": "Jeanette",
+              "artist": "Underground Escape (version Jeanette)",
               "duration": 201,
               "checked": true
             },
             {
-              "id": 1794741980225,
-              "title": "El fin del mundo",
-              "artist": "La La Love You",
-              "duration": 218,
+              "id": 1794741980219,
+              "title": "Aquella tarde",
+              "artist": "Underground Escape",
+              "duration": 210,
               "checked": true
             },
             {
-              "id": 1794741980226,
-              "title": "Desire",
-              "artist": "U2",
-              "duration": 179,
+              "id": 1794741980218,
+              "title": "En algún lugar",
+              "artist": "Duncan Dhu",
+              "duration": 237,
+              "checked": true
+            },
+            {
+              "id": 1794741980212,
+              "title": "No puedo vivir sin ti",
+              "artist": "Coque Malla",
+              "duration": 214,
+              "checked": true
+            },
+            {
+              "id": 1794741980210,
+              "title": "Creep",
+              "artist": "Radiohead",
+              "duration": 239,
+              "checked": true
+            },
+            {
+              "id": 1794741980222,
+              "title": "Highway to Hell",
+              "artist": "AC/DC",
+              "duration": 208,
               "checked": true
             },
             {
