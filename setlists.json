@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "updatedAt": "2026-11-15T11:30:09.888Z",
+  "updatedAt": "2026-11-15T11:30:55.563Z",
   "activeBand": "underground_escape",
   "bands": {
     "april_crew": {
@@ -419,6 +419,13 @@
               "title": "Killing in the Name",
               "artist": "Rage Against The Machine",
               "duration": 314,
+              "checked": true
+            },
+            {
+              "id": 1794742239478,
+              "title": "Emborracharme",
+              "artist": "Lori Meyers",
+              "duration": 225,
               "checked": true
             },
             {
