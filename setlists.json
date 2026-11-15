@@ -1,10 +1,10 @@
 {
   "version": "2.0",
-  "updatedAt": "2026-11-15T11:34:22.711Z",
-  "activeBand": "underground_escape",
+  "updatedAt": "2026-11-15T11:35:17.272Z",
+  "activeBand": "april_crew",
   "bands": {
     "april_crew": {
-      "activeSetlistId": "list_1794742063696_153",
+      "activeSetlistId": "list_1794742483645_436",
       "setlists": {
         "list_1794742063696_153": {
           "name": "Repertorio_April_Crew",
@@ -168,6 +168,130 @@
               "title": "Use Somebody",
               "artist": "Kings of Leon",
               "duration": 230,
+              "checked": true
+            }
+          ]
+        },
+        "list_1794742483645_436": {
+          "name": "Concierto_La_Trinchera_16-10-2026_setlist",
+          "tracks": [
+            {
+              "id": 1794742483645,
+              "title": "Personal Jesus",
+              "artist": "Depeche Mode",
+              "duration": 227,
+              "checked": true
+            },
+            {
+              "id": 1794742483646,
+              "title": "On Graveyard Hill",
+              "artist": "Pixies",
+              "duration": 205,
+              "checked": true
+            },
+            {
+              "id": 1794742483647,
+              "title": "Boys Don't Cry",
+              "artist": "The Cure",
+              "duration": 162,
+              "checked": true
+            },
+            {
+              "id": 1794742483648,
+              "title": "There Is a Light That Never Goes Out",
+              "artist": "The Smiths",
+              "duration": 244,
+              "checked": true
+            },
+            {
+              "id": 1794742483649,
+              "title": "This Picture",
+              "artist": "Placebo",
+              "duration": 214,
+              "checked": true
+            },
+            {
+              "id": 1794742483650,
+              "title": "Somebody Told Me",
+              "artist": "The Killers",
+              "duration": 197,
+              "checked": true
+            },
+            {
+              "id": 1794742483651,
+              "title": "Evil",
+              "artist": "Interpol",
+              "duration": 215,
+              "checked": true
+            },
+            {
+              "id": 1794742483652,
+              "title": "Common People",
+              "artist": "Pulp",
+              "duration": 248,
+              "checked": true
+            },
+            {
+              "id": 1794742483653,
+              "title": "Disorder",
+              "artist": "Joy Division",
+              "duration": 212,
+              "checked": true
+            },
+            {
+              "id": 1794742483654,
+              "title": "Plug in Baby",
+              "artist": "Muse",
+              "duration": 219,
+              "checked": true
+            },
+            {
+              "id": 1794742483655,
+              "title": "505",
+              "artist": "Arctic Monkeys",
+              "duration": 253,
+              "checked": true
+            },
+            {
+              "id": 1794742483656,
+              "title": "Dreaming of You",
+              "artist": "The Coral",
+              "duration": 141,
+              "checked": true
+            },
+            {
+              "id": 1794742483657,
+              "title": "Every You Every Me",
+              "artist": "Placebo",
+              "duration": 214,
+              "checked": true
+            },
+            {
+              "id": 1794742483658,
+              "title": "The Outside",
+              "artist": "Grand Avenue",
+              "duration": 221,
+              "checked": true
+            },
+            {
+              "id": 1794742483659,
+              "title": "Dakota",
+              "artist": "Stereophonics",
+              "duration": 297,
+              "checked": true
+            },
+            {
+              "id": 1794742483661,
+              "title": "Reptilia",
+              "artist": "The Strokes",
+              "duration": 219,
+              "checked": true
+            },
+            {
+              "id": 1794742483662,
+              "title": "Dancing With Myself",
+              "artist": "Billy Idol",
+              "duration": 290,
               "checked": true
             }
           ]
