@@ -1,0 +1,233 @@
+{
+  "version": "2.0",
+  "updatedAt": "2026-11-15T11:10:44.674Z",
+  "activeBand": "underground_escape",
+  "bands": {
+    "april_crew": {
+      "activeSetlistId": "repertorio_principal",
+      "setlists": {
+        "repertorio_principal": {
+          "name": "Repertorio Completo (21 temas)",
+          "tracks": [
+            {
+              "id": 1,
+              "title": "Personal Jesus - Single Version",
+              "artist": "Depeche Mode",
+              "duration": 224,
+              "checked": true
+            },
+            {
+              "id": 2,
+              "title": "Where Is My Mind?",
+              "artist": "Pixies",
+              "duration": 232,
+              "checked": true
+            },
+            {
+              "id": 3,
+              "title": "Boys Don't Cry",
+              "artist": "The Cure",
+              "duration": 157,
+              "checked": true
+            },
+            {
+              "id": 4,
+              "title": "Evil",
+              "artist": "Interpol",
+              "duration": 216,
+              "checked": true
+            },
+            {
+              "id": 5,
+              "title": "This Picture",
+              "artist": "Placebo",
+              "duration": 216,
+              "checked": true
+            },
+            {
+              "id": 6,
+              "title": "Somebody Told Me",
+              "artist": "The Killers",
+              "duration": 197,
+              "checked": true
+            },
+            {
+              "id": 7,
+              "title": "Common People - Single Version",
+              "artist": "Pulp",
+              "duration": 351,
+              "checked": true
+            },
+            {
+              "id": 8,
+              "title": "Reptilia",
+              "artist": "The Strokes",
+              "duration": 220,
+              "checked": true
+            },
+            {
+              "id": 9,
+              "title": "There Is a Light That Never Goes Out - 2011 Remaster",
+              "artist": "The Smiths",
+              "duration": 245,
+              "checked": true
+            },
+            {
+              "id": 10,
+              "title": "Dreaming of You",
+              "artist": "The Coral",
+              "duration": 141,
+              "checked": true
+            },
+            {
+              "id": 11,
+              "title": "Disorder",
+              "artist": "Joy Division",
+              "duration": 213,
+              "checked": true
+            },
+            {
+              "id": 12,
+              "title": "Use Somebody",
+              "artist": "Kings of Leon",
+              "duration": 231,
+              "checked": true
+            },
+            {
+              "id": 13,
+              "title": "The Outside",
+              "artist": "Grand Avenue",
+              "duration": 219,
+              "checked": true
+            },
+            {
+              "id": 14,
+              "title": "Munich",
+              "artist": "Editors",
+              "duration": 226,
+              "checked": true
+            },
+            {
+              "id": 15,
+              "title": "Dakota",
+              "artist": "Stereophonics",
+              "duration": 297,
+              "checked": true
+            },
+            {
+              "id": 16,
+              "title": "Lonely Boy",
+              "artist": "The Black Keys",
+              "duration": 194,
+              "checked": true
+            },
+            {
+              "id": 17,
+              "title": "Plug in Baby",
+              "artist": "Muse",
+              "duration": 220,
+              "checked": true
+            },
+            {
+              "id": 18,
+              "title": "505",
+              "artist": "Arctic Monkeys",
+              "duration": 254,
+              "checked": true
+            },
+            {
+              "id": 19,
+              "title": "Dancing With Myself",
+              "artist": "Billy Idol",
+              "duration": 299,
+              "checked": true
+            },
+            {
+              "id": 20,
+              "title": "The Pretender",
+              "artist": "Foo Fighters",
+              "duration": 269,
+              "checked": true
+            },
+            {
+              "id": 21,
+              "title": "Every You Every Me",
+              "artist": "Placebo",
+              "duration": 215,
+              "checked": true
+            }
+          ]
+        }
+      }
+    },
+    "local_13": {
+      "activeSetlistId": "repertorio_local13",
+      "setlists": {
+        "repertorio_local13": {
+          "name": "Lista Directo",
+          "tracks": [
+            {
+              "id": 101,
+              "title": "Turnedo",
+              "artist": "Iván Ferreiro",
+              "duration": 275,
+              "checked": true
+            },
+            {
+              "id": 102,
+              "title": "Insurrección",
+              "artist": "El Último de la Fila",
+              "duration": 134,
+              "checked": true
+            },
+            {
+              "id": 103,
+              "title": "Cien Gaviotas",
+              "artist": "Duncan Dhu",
+              "duration": 180,
+              "checked": true
+            },
+            {
+              "id": 104,
+              "title": "La Chica de Ayer",
+              "artist": "Nacha Pop",
+              "duration": 205,
+              "checked": true
+            }
+          ]
+        }
+      }
+    },
+    "underground_escape": {
+      "activeSetlistId": "repertorio_ue",
+      "setlists": {
+        "repertorio_ue": {
+          "name": "Setlist Escape",
+          "tracks": [
+            {
+              "id": 201,
+              "title": "Smells Like Teen Spirit",
+              "artist": "Nirvana",
+              "duration": 301,
+              "checked": true
+            },
+            {
+              "id": 202,
+              "title": "Killing in the Name",
+              "artist": "Rage Against The Machine",
+              "duration": 314,
+              "checked": true
+            },
+            {
+              "id": 203,
+              "title": "Zombie",
+              "artist": "The Cranberries",
+              "duration": 306,
+              "checked": true
+            }
+          ]
+        }
+      }
+    }
+  }
+}
