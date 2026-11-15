@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "updatedAt": "2026-11-15T11:24:13.810Z",
+  "updatedAt": "2026-11-15T11:26:37.675Z",
   "activeBand": "underground_escape",
   "bands": {
     "april_crew": {
@@ -199,30 +199,301 @@
       }
     },
     "underground_escape": {
-      "activeSetlistId": "repertorio_ue",
+      "activeSetlistId": "list_1794741980239_923",
       "setlists": {
-        "repertorio_ue": {
-          "name": "Setlist Escape",
+        "list_1794741980206_400": {
+          "name": "Repertorio_Underground_Escape_setlist",
           "tracks": [
             {
-              "id": 201,
-              "title": "Smells Like Teen Spirit",
-              "artist": "Nirvana",
-              "duration": 301,
+              "id": 1794741980206,
+              "title": "Seven Nation Army",
+              "artist": "The White Stripes",
+              "duration": 232,
               "checked": true
             },
             {
-              "id": 202,
+              "id": 1794741980207,
+              "title": "Should I Stay or Should I Go",
+              "artist": "The Clash",
+              "duration": 188,
+              "checked": true
+            },
+            {
+              "id": 1794741980208,
+              "title": "Losing My Religion",
+              "artist": "R.E.M.",
+              "duration": 268,
+              "checked": true
+            },
+            {
+              "id": 1794741980209,
+              "title": "Hard to Handle",
+              "artist": "The Black Crowes",
+              "duration": 188,
+              "checked": true
+            },
+            {
+              "id": 1794741980210,
+              "title": "Creep",
+              "artist": "Radiohead",
+              "duration": 239,
+              "checked": true
+            },
+            {
+              "id": 1794741980211,
+              "title": "Escuela de calor",
+              "artist": "Radio Futura",
+              "duration": 214,
+              "checked": true
+            },
+            {
+              "id": 1794741980212,
+              "title": "No puedo vivir sin ti",
+              "artist": "Coque Malla",
+              "duration": 214,
+              "checked": true
+            },
+            {
+              "id": 1794741980213,
+              "title": "Belleza encontrada",
+              "artist": "Underground Escape",
+              "duration": 210,
+              "checked": true
+            },
+            {
+              "id": 1794741980214,
+              "title": "Use Somebody",
+              "artist": "Kings of Leon",
+              "duration": 231,
+              "checked": true
+            },
+            {
+              "id": 1794741980215,
+              "title": "This Picture",
+              "artist": "Placebo",
+              "duration": 214,
+              "checked": true
+            },
+            {
+              "id": 1794741980216,
+              "title": "Boulevard of Broken Dreams",
+              "artist": "Green Day",
+              "duration": 260,
+              "checked": true
+            },
+            {
+              "id": 1794741980217,
+              "title": "Wicked Game",
+              "artist": "Chris Isaak",
+              "duration": 289,
+              "checked": true
+            },
+            {
+              "id": 1794741980218,
+              "title": "En algún lugar",
+              "artist": "Duncan Dhu",
+              "duration": 237,
+              "checked": true
+            },
+            {
+              "id": 1794741980219,
+              "title": "Aquella tarde",
+              "artist": "Underground Escape",
+              "duration": 210,
+              "checked": true
+            },
+            {
+              "id": 1794741980220,
+              "title": "Voy a pasármelo bien",
+              "artist": "Hombres G",
+              "duration": 234,
+              "checked": true
+            },
+            {
+              "id": 1794741980221,
+              "title": "Pecado Capital",
+              "artist": "Underground Escape",
+              "duration": 210,
+              "checked": true
+            },
+            {
+              "id": 1794741980222,
+              "title": "Highway to Hell",
+              "artist": "AC/DC",
+              "duration": 208,
+              "checked": true
+            },
+            {
+              "id": 1794741980223,
+              "title": "Take Me Out",
+              "artist": "Franz Ferdinand",
+              "duration": 237,
+              "checked": true
+            },
+            {
+              "id": 1794741980224,
+              "title": "Porque te vas",
+              "artist": "Jeanette",
+              "duration": 201,
+              "checked": true
+            },
+            {
+              "id": 1794741980225,
+              "title": "El fin del mundo",
+              "artist": "La La Love You",
+              "duration": 218,
+              "checked": true
+            },
+            {
+              "id": 1794741980226,
+              "title": "Desire",
+              "artist": "U2",
+              "duration": 179,
+              "checked": true
+            },
+            {
+              "id": 1794741980227,
+              "title": "El límite",
+              "artist": "La Frontera",
+              "duration": 259,
+              "checked": true
+            },
+            {
+              "id": 1794741980228,
               "title": "Killing in the Name",
               "artist": "Rage Against The Machine",
               "duration": 314,
               "checked": true
+            }
+          ]
+        },
+        "list_1794741980239_923": {
+          "name": "Conncierto_Sala_Olvido_22-01-27",
+          "tracks": [
+            {
+              "id": 1794741980239,
+              "title": "Seven Nation Army",
+              "artist": "The White Stripes",
+              "duration": 232,
+              "checked": true
             },
             {
-              "id": 203,
-              "title": "Zombie",
-              "artist": "The Cranberries",
-              "duration": 306,
+              "id": 1794741980240,
+              "title": "Should I Stay or Should I Go",
+              "artist": "The Clash",
+              "duration": 186,
+              "checked": true
+            },
+            {
+              "id": 1794741980241,
+              "title": "Hard to Handle",
+              "artist": "The Black Crowes",
+              "duration": 188,
+              "checked": true
+            },
+            {
+              "id": 1794741980242,
+              "title": "Escuela de calor",
+              "artist": "Radio Futura",
+              "duration": 210,
+              "checked": true
+            },
+            {
+              "id": 1794741980243,
+              "title": "Wicked Game",
+              "artist": "Chris Isaak",
+              "duration": 286,
+              "checked": true
+            },
+            {
+              "id": 1794741980244,
+              "title": "Use Somebody",
+              "artist": "Kings of Leon",
+              "duration": 230,
+              "checked": true
+            },
+            {
+              "id": 1794741980245,
+              "title": "Belleza encontrada",
+              "artist": "Underground Escape",
+              "duration": 210,
+              "checked": true
+            },
+            {
+              "id": 1794741980246,
+              "title": "El límite",
+              "artist": "La Frontera",
+              "duration": 265,
+              "checked": true
+            },
+            {
+              "id": 1794741980247,
+              "title": "This Picture",
+              "artist": "Placebo",
+              "duration": 210,
+              "checked": true
+            },
+            {
+              "id": 1794741980248,
+              "title": "Porque te vas",
+              "artist": "Jeanette",
+              "duration": 200,
+              "checked": true
+            },
+            {
+              "id": 1794741980249,
+              "title": "Take Me Out",
+              "artist": "Franz Ferdinand",
+              "duration": 237,
+              "checked": true
+            },
+            {
+              "id": 1794741980250,
+              "title": "Desire",
+              "artist": "U2",
+              "duration": 179,
+              "checked": true
+            },
+            {
+              "id": 1794741980251,
+              "title": "El fin del mundo",
+              "artist": "La La Love You",
+              "duration": 240,
+              "checked": true
+            },
+            {
+              "id": 1794741980252,
+              "title": "Pecado Capital",
+              "artist": "La Bien Querida",
+              "duration": 250,
+              "checked": true
+            },
+            {
+              "id": 1794741980253,
+              "title": "Emborracharme",
+              "artist": "Lori Meyers",
+              "duration": 225,
+              "checked": true
+            },
+            {
+              "id": 1794741980254,
+              "title": "Voy a pasármelo bien",
+              "artist": "Hombres G",
+              "duration": 233,
+              "checked": true
+            },
+            {
+              "id": 1794741980255,
+              "title": "Killing in the Name",
+              "artist": "Rage Against the Machine",
+              "duration": 314,
+              "checked": true
+            },
+            {
+              "id": 1794741980256,
+              "title": "El ritmo del garaje",
+              "artist": "Loquillo y los Trogloditas",
+              "duration": 195,
               "checked": true
             }
           ]
