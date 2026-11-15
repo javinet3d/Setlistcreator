@@ -1,159 +1,173 @@
 {
   "version": "2.0",
-  "updatedAt": "2026-11-15T11:27:16.000Z",
-  "activeBand": "local_13",
+  "updatedAt": "2026-11-15T11:28:12.796Z",
+  "activeBand": "april_crew",
   "bands": {
     "april_crew": {
-      "activeSetlistId": "repertorio_principal",
+      "activeSetlistId": "list_1794742063696_153",
       "setlists": {
-        "repertorio_principal": {
-          "name": "Repertorio Completo (21 temas)",
+        "list_1794742063696_153": {
+          "name": "Repertorio_April_Crew",
           "tracks": [
             {
-              "id": 1,
-              "title": "Personal Jesus - Single Version",
+              "id": 1794742063696,
+              "title": "Personal Jesus",
               "artist": "Depeche Mode",
-              "duration": 224,
+              "duration": 227,
               "checked": true
             },
             {
-              "id": 2,
-              "title": "Where Is My Mind?",
+              "id": 1794742063697,
+              "title": "On Graveyard Hill",
               "artist": "Pixies",
-              "duration": 232,
+              "duration": 205,
               "checked": true
             },
             {
-              "id": 3,
+              "id": 1794742063698,
               "title": "Boys Don't Cry",
               "artist": "The Cure",
-              "duration": 157,
+              "duration": 162,
               "checked": true
             },
             {
-              "id": 4,
-              "title": "Evil",
-              "artist": "Interpol",
-              "duration": 216,
+              "id": 1794742063699,
+              "title": "There Is a Light That Never Goes Out",
+              "artist": "The Smiths",
+              "duration": 244,
               "checked": true
             },
             {
-              "id": 5,
+              "id": 1794742063700,
               "title": "This Picture",
               "artist": "Placebo",
-              "duration": 216,
+              "duration": 214,
               "checked": true
             },
             {
-              "id": 6,
+              "id": 1794742063701,
               "title": "Somebody Told Me",
               "artist": "The Killers",
               "duration": 197,
               "checked": true
             },
             {
-              "id": 7,
-              "title": "Common People - Single Version",
+              "id": 1794742063702,
+              "title": "Evil",
+              "artist": "Interpol",
+              "duration": 215,
+              "checked": true
+            },
+            {
+              "id": 1794742063703,
+              "title": "Common People",
               "artist": "Pulp",
-              "duration": 351,
+              "duration": 248,
               "checked": true
             },
             {
-              "id": 8,
-              "title": "Reptilia",
-              "artist": "The Strokes",
-              "duration": 220,
+              "id": 1794742063704,
+              "title": "Disorder",
+              "artist": "Joy Division",
+              "duration": 212,
               "checked": true
             },
             {
-              "id": 9,
-              "title": "There Is a Light That Never Goes Out - 2011 Remaster",
-              "artist": "The Smiths",
-              "duration": 245,
+              "id": 1794742063705,
+              "title": "Plug in Baby",
+              "artist": "Muse",
+              "duration": 219,
               "checked": true
             },
             {
-              "id": 10,
+              "id": 1794742063706,
+              "title": "505",
+              "artist": "Arctic Monkeys",
+              "duration": 253,
+              "checked": true
+            },
+            {
+              "id": 1794742063707,
               "title": "Dreaming of You",
               "artist": "The Coral",
               "duration": 141,
               "checked": true
             },
             {
-              "id": 11,
-              "title": "Disorder",
-              "artist": "Joy Division",
-              "duration": 213,
+              "id": 1794742063708,
+              "title": "Every You Every Me",
+              "artist": "Placebo",
+              "duration": 214,
               "checked": true
             },
             {
-              "id": 12,
-              "title": "Use Somebody",
-              "artist": "Kings of Leon",
-              "duration": 231,
-              "checked": true
-            },
-            {
-              "id": 13,
+              "id": 1794742063709,
               "title": "The Outside",
               "artist": "Grand Avenue",
-              "duration": 219,
+              "duration": 221,
               "checked": true
             },
             {
-              "id": 14,
-              "title": "Munich",
-              "artist": "Editors",
-              "duration": 226,
-              "checked": true
-            },
-            {
-              "id": 15,
+              "id": 1794742063710,
               "title": "Dakota",
               "artist": "Stereophonics",
               "duration": 297,
               "checked": true
             },
             {
-              "id": 16,
-              "title": "Lonely Boy",
-              "artist": "The Black Keys",
-              "duration": 194,
+              "id": 1794742063711,
+              "title": "Munich",
+              "artist": "Editors",
+              "duration": 226,
               "checked": true
             },
             {
-              "id": 17,
-              "title": "Plug in Baby",
-              "artist": "Muse",
-              "duration": 220,
+              "id": 1794742063712,
+              "title": "Reptilia",
+              "artist": "The Strokes",
+              "duration": 219,
               "checked": true
             },
             {
-              "id": 18,
-              "title": "505",
-              "artist": "Arctic Monkeys",
-              "duration": 254,
-              "checked": true
-            },
-            {
-              "id": 19,
+              "id": 1794742063713,
               "title": "Dancing With Myself",
               "artist": "Billy Idol",
-              "duration": 299,
+              "duration": 290,
               "checked": true
             },
             {
-              "id": 20,
+              "id": 1794742063714,
+              "title": "Lonely Boy",
+              "artist": "The Black Keys",
+              "duration": 193,
+              "checked": true
+            },
+            {
+              "id": 1794742063715,
+              "title": "Where Is My Mind?",
+              "artist": "Pixies",
+              "duration": 232,
+              "checked": true
+            },
+            {
+              "id": 1794742063716,
               "title": "The Pretender",
               "artist": "Foo Fighters",
               "duration": 269,
               "checked": true
             },
             {
-              "id": 21,
-              "title": "Every You Every Me",
-              "artist": "Placebo",
-              "duration": 215,
+              "id": 1794742063717,
+              "title": "April Skyes",
+              "artist": "The Jesus and Mary Chane",
+              "duration": 200,
+              "checked": true
+            },
+            {
+              "id": 1794742063718,
+              "title": "Use Somebody",
+              "artist": "Kings of Leon",
+              "duration": 230,
               "checked": true
             }
           ]
