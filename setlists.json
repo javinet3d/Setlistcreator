@@ -1,7 +1,7 @@
 {
   "version": "2.0",
-  "updatedAt": "2026-11-15T11:26:37.675Z",
-  "activeBand": "underground_escape",
+  "updatedAt": "2026-11-15T11:27:16.000Z",
+  "activeBand": "local_13",
   "bands": {
     "april_crew": {
       "activeSetlistId": "repertorio_principal",
@@ -161,37 +161,156 @@
       }
     },
     "local_13": {
-      "activeSetlistId": "repertorio_local13",
+      "activeSetlistId": "list_1794742023636_673",
       "setlists": {
-        "repertorio_local13": {
-          "name": "Lista Directo",
+        "list_1794742023636_673": {
+          "name": "Repertorio_Local_13_setlist (1)",
           "tracks": [
             {
-              "id": 101,
-              "title": "Turnedo",
-              "artist": "Iván Ferreiro",
-              "duration": 275,
+              "id": 1794742023636,
+              "title": "No puedo vivir sin ti",
+              "artist": "Coque Malla",
+              "duration": 230,
               "checked": true
             },
             {
-              "id": 102,
-              "title": "Insurrección",
-              "artist": "El Último de la Fila",
-              "duration": 134,
-              "checked": true
-            },
-            {
-              "id": 103,
-              "title": "Cien Gaviotas",
-              "artist": "Duncan Dhu",
+              "id": 1794742023637,
+              "title": "Años 80",
+              "artist": "Los Piratas",
               "duration": 180,
               "checked": true
             },
             {
-              "id": 104,
-              "title": "La Chica de Ayer",
-              "artist": "Nacha Pop",
-              "duration": 205,
+              "id": 1794742023638,
+              "title": "Sixteen",
+              "artist": "Leiva",
+              "duration": 210,
+              "checked": true
+            },
+            {
+              "id": 1794742023639,
+              "title": "En algún lugar",
+              "artist": "Duncan Dhu",
+              "duration": 236,
+              "checked": true
+            },
+            {
+              "id": 1794742023640,
+              "title": "Creep",
+              "artist": "Radiohead",
+              "duration": 188,
+              "checked": true
+            },
+            {
+              "id": 1794742023641,
+              "title": "Carolina",
+              "artist": "M",
+              "duration": 180,
+              "checked": true
+            },
+            {
+              "id": 1794742023642,
+              "title": "Terriblemente cruel",
+              "artist": "Leiva",
+              "duration": 208,
+              "checked": true
+            },
+            {
+              "id": 1794742023643,
+              "title": "Bajo la luz de la luna",
+              "artist": "Los Rebeldes",
+              "duration": 210,
+              "checked": true
+            },
+            {
+              "id": 1794742023644,
+              "title": "Maldito duende",
+              "artist": "Héroes del Silencio",
+              "duration": 278,
+              "checked": true
+            },
+            {
+              "id": 1794742023645,
+              "title": "Tren de largo recorrido",
+              "artist": "La Unión",
+              "duration": 155,
+              "checked": true
+            },
+            {
+              "id": 1794742023646,
+              "title": "A un minuto de ti",
+              "artist": "Duncan Dhu",
+              "duration": 252,
+              "checked": true
+            },
+            {
+              "id": 1794742023647,
+              "title": "Concierto salvaje",
+              "artist": "M",
+              "duration": 180,
+              "checked": true
+            },
+            {
+              "id": 1794742023648,
+              "title": "Jumping Jack Flash",
+              "artist": "The Rolling Stones",
+              "duration": 237,
+              "checked": true
+            },
+            {
+              "id": 1794742023649,
+              "title": "Vive y deja vivir",
+              "artist": "Local 13",
+              "duration": 260,
+              "checked": true
+            },
+            {
+              "id": 1794742023650,
+              "title": "Escuela de calor",
+              "artist": "Radio Futura",
+              "duration": 60,
+              "checked": true
+            },
+            {
+              "id": 1794742023651,
+              "title": "Soldadito marinero",
+              "artist": "Fito y Fitipaldis",
+              "duration": 243,
+              "checked": true
+            },
+            {
+              "id": 1794742023652,
+              "title": "A todo que sí",
+              "artist": "Los Zigarros",
+              "duration": 225,
+              "checked": true
+            },
+            {
+              "id": 1794742023653,
+              "title": "Manager Blues",
+              "artist": "Revolver",
+              "duration": 283,
+              "checked": true
+            },
+            {
+              "id": 1794742023654,
+              "title": "Acabo de llegar",
+              "artist": "Fito y Fitipaldis",
+              "duration": 228,
+              "checked": true
+            },
+            {
+              "id": 1794742023655,
+              "title": "Grita",
+              "artist": "Jarabe de Palo",
+              "duration": 210,
+              "checked": true
+            },
+            {
+              "id": 1794742023656,
+              "title": "Insurrección",
+              "artist": "El último de la fila",
+              "duration": 210,
               "checked": true
             }
           ]
