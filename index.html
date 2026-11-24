@@ -29,16 +29,14 @@
     <div id="bgWatermark" class="w-[85vw] max-w-[550px] aspect-square rounded-full transition-all duration-500 opacity-[0.08] bg-center bg-no-repeat bg-contain filter contrast-125"></div>
   </div>
 
-  <!-- CABECERA PRINCIPAL: SELECTOR DE GRUPO + ACCIONES SUPERIORES -->
+  <!-- CABECERA PRINCIPAL: SELECTOR DE GRUPO + ACCIONES SUPERIORES SIN SOLAPAMIENTOS -->
   <header class="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 shadow-lg px-3 py-2 no-print">
     <div class="max-w-4xl mx-auto flex flex-wrap items-center justify-between gap-2">
       
-      <!-- IZQUIERDA: GRUPO EXCLUSIVO (Sin superposiciones) -->
+      <!-- IZQUIERDA: AVATAR + SELECTOR DE GRUPO EXCLUSIVO -->
       <div class="flex items-center gap-2 min-w-0 flex-shrink-0">
-        <!-- Logo circular avatar -->
         <div id="bandAvatar" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-800 border border-slate-700 bg-center bg-contain bg-no-repeat shrink-0 shadow-inner overflow-hidden"></div>
         
-        <!-- Selector de Grupo directo -->
         <div class="relative">
           <select id="bandSelect" onchange="changeBand(this.value)" class="bg-slate-800 text-xs sm:text-sm font-bold text-emerald-400 hover:text-emerald-300 border border-slate-700 rounded-lg px-2 sm:px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer transition shadow-sm max-w-[140px] sm:max-w-none truncate">
             <option value="april_crew">April Crew</option>
@@ -48,9 +46,9 @@
         </div>
       </div>
 
-      <!-- DERECHA: ESTADO, DESHACER, GUARDAR, TEMA Y MENÚ -->
+      <!-- DERECHA: ESTADO, DESHACER, GUARDAR, +TEMA Y MENÚ -->
       <div class="flex items-center gap-1 sm:gap-1.5 shrink-0 ml-auto">
-        <!-- Indicador de Estado de Guardado / GitHub -->
+        <!-- Indicador de Estado de Guardado / Firebase -->
         <span id="saveStatusBadge" class="text-[10px] sm:text-xs font-semibold px-2 py-1 rounded-md border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 transition-colors whitespace-nowrap">
           Guardado
         </span>
@@ -61,8 +59,8 @@
           <span class="hidden md:inline">Deshacer</span>
         </button>
 
-        <!-- Botón Guardar (Local + GitHub si está configurado) -->
-        <button id="saveBtn" onclick="saveManual()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-2 sm:px-2.5 py-1.5 rounded-lg shadow flex items-center gap-1 active:scale-95 transition" title="Guardar cambios (Local + GitHub)">
+        <!-- Botón Guardar (Local + Firebase) -->
+        <button id="saveBtn" onclick="saveManual()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-2 sm:px-2.5 py-1.5 rounded-lg shadow flex items-center gap-1 active:scale-95 transition" title="Guardar cambios (Local + Firebase)">
           <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
           <span class="hidden sm:inline">Guardar</span>
         </button>
@@ -94,29 +92,34 @@
             </button>
 
             <div class="border-t border-slate-800 my-1"></div>
-            <div class="px-3 py-1 flex items-center justify-between text-[10px] uppercase font-bold text-emerald-400/90">
-              <span>Sincronización GitHub</span>
-              <span id="ghMenuStatusDot" class="w-2 h-2 rounded-full bg-slate-600" title="Estado de GitHub"></span>
+            <div class="px-3 py-1 flex items-center justify-between text-[10px] uppercase font-bold text-amber-400/90">
+              <span>Nube Firebase &amp; JSON</span>
+              <span id="fbMenuStatusDot" class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_#34d399]" title="Firebase activo"></span>
             </div>
 
-            <button onclick="openGithubModal()" class="w-full text-left px-3 py-2 hover:bg-slate-800 flex items-start gap-2 text-slate-200">
-              <svg class="w-4 h-4 text-purple-400 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path></svg>
-              <span class="leading-tight">Configurar GitHub <span id="ghMenuRepoLabel" class="block text-[10px] text-slate-400">No configurado</span></span>
+            <button onclick="syncFromFirebase(false)" class="w-full text-left px-3 py-2 hover:bg-slate-800 flex items-start gap-2 text-slate-200">
+              <svg class="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+              <span class="leading-tight">Sincronizar ahora (Firebase) <span class="block text-[10px] text-slate-400">Descargar última versión</span></span>
             </button>
 
-            <button onclick="syncFromGithub(false)" class="w-full text-left px-3 py-2 hover:bg-slate-800 flex items-start gap-2 text-slate-200">
-              <svg class="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-              <span class="leading-tight">Sincronizar desde GitHub <span class="block text-[10px] text-slate-400">Descargar última versión</span></span>
+            <button onclick="openFirebaseModal()" class="w-full text-left px-3 py-2 hover:bg-slate-800 flex items-start gap-2 text-slate-200">
+              <svg class="w-4 h-4 text-amber-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path></svg>
+              <span class="leading-tight">Configurar Firebase <span id="fbMenuUrlLabel" class="block text-[10px] text-emerald-400/90 truncate max-w-[180px]">setlist-manager-37c8f...</span></span>
             </button>
 
             <button onclick="downloadServerJson()" class="w-full text-left px-3 py-2 hover:bg-slate-800 flex items-center gap-2 text-slate-200">
               <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-              <span>Descargar copia setlists.json</span>
+              <span>Descargar setlists.json</span>
+            </button>
+
+            <button onclick="syncFromStaticServerJson(false)" class="w-full text-left px-3 py-2 hover:bg-slate-800 flex items-center gap-2 text-slate-200">
+              <svg class="w-4 h-4 text-teal-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path></svg>
+              <span>Cargar ./setlists.json del servidor</span>
             </button>
 
             <button onclick="triggerJsonBackupImport()" class="w-full text-left px-3 py-2 hover:bg-slate-800 flex items-center gap-2 text-slate-200">
-              <svg class="w-4 h-4 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-              <span>Importar respaldo (.json)</span>
+              <svg class="w-4 h-4 text-purple-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+              <span>Importar backup .json</span>
             </button>
 
             <div class="border-t border-slate-800 my-1"></div>
@@ -146,7 +149,7 @@
         </div>
         <button onclick="openSetlistsModal()" class="shrink-0 bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-emerald-400 text-[11px] px-2.5 py-1 rounded-lg border border-slate-700 transition flex items-center gap-1" title="Administrar repertorios">
           <svg class="w-3.5 h-3.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-          <span class="hidden sm:inline">Administrar</span>
+          <span class="hidden sm:inline">Repertorios</span>
         </button>
       </div>
     </div>
@@ -197,57 +200,35 @@
   <input type="file" id="txtFileInput" accept=".txt" multiple class="hidden" onchange="handleTxtFilesSelected(event)">
   <input type="file" id="jsonFileInput" accept=".json,application/json" class="hidden" onchange="handleJsonBackupSelected(event)">
 
-  <!-- MODAL: CONFIGURACIÓN DE GITHUB API -->
-  <div id="githubModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3">
+  <!-- MODAL: CONFIGURACIÓN DE FIREBASE REALTIME DATABASE -->
+  <div id="firebaseModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3">
     <div class="bg-slate-900 border border-slate-700 w-full max-w-md rounded-xl shadow-2xl p-4 flex flex-col max-h-[90vh]">
       <div class="flex items-center justify-between pb-3 border-b border-slate-800">
         <div class="flex items-center gap-2">
-          <svg class="w-5 h-5 text-emerald-400" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path></svg>
-          <h3 class="font-bold text-sm text-slate-100">Conectar Repositorio GitHub</h3>
+          <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path></svg>
+          <h3 class="font-bold text-sm text-slate-100">Conectar Firebase Realtime Database</h3>
         </div>
-        <button onclick="closeGithubModal()" class="text-slate-400 hover:text-white text-xl leading-none px-1">&times;</button>
+        <button onclick="closeFirebaseModal()" class="text-slate-400 hover:text-white text-xl leading-none px-1">&times;</button>
       </div>
 
-      <div class="my-3 space-y-2.5 overflow-y-auto pr-1 custom-scrollbar text-xs">
-        <p class="text-[11px] text-slate-400 leading-relaxed bg-slate-950/70 border border-slate-800 rounded-lg p-2.5">
-          Guarda tus repertorios directamente en <code class="text-emerald-400">setlists.json</code> dentro de tu repositorio de GitHub cada vez que pulses <strong>Guardar</strong>. Tu token se almacena únicamente en este navegador.
+      <div class="my-3 space-y-3 overflow-y-auto pr-1 custom-scrollbar text-xs">
+        <p class="text-[11px] text-slate-300 leading-relaxed bg-slate-950/70 border border-slate-800 rounded-lg p-2.5">
+          URL de <strong>Firebase Realtime Database</strong> compartida con toda la banda. Cada pulsación en <strong>Guardar</strong> sincroniza automáticamente todos los repertorios en <code class="text-emerald-400">/setlists.json</code>.
         </p>
 
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block text-slate-400 mb-1">Usuario / Organización</label>
-            <input type="text" id="ghOwnerInput" placeholder="ej: tu-usuario" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white focus:ring-1 focus:ring-emerald-500 focus:outline-none">
-          </div>
-          <div>
-            <label class="block text-slate-400 mb-1">Repositorio</label>
-            <input type="text" id="ghRepoInput" placeholder="ej: setlist-manager" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white focus:ring-1 focus:ring-emerald-500 focus:outline-none">
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block text-slate-400 mb-1">Rama (Branch)</label>
-            <input type="text" id="ghBranchInput" value="main" placeholder="main" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white focus:ring-1 focus:ring-emerald-500 focus:outline-none">
-          </div>
-          <div>
-            <label class="block text-slate-400 mb-1">Ruta del archivo</label>
-            <input type="text" id="ghPathInput" value="setlists.json" placeholder="setlists.json" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white font-mono focus:ring-1 focus:ring-emerald-500 focus:outline-none">
-          </div>
-        </div>
-
         <div>
-          <label class="block text-slate-400 mb-1">Personal Access Token (Fine-grained: Contents Read &amp; Write)</label>
-          <input type="password" id="ghTokenInput" placeholder="github_pat_..." class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white font-mono focus:ring-1 focus:ring-emerald-500 focus:outline-none">
+          <label class="block text-slate-400 mb-1">URL de Firebase Realtime Database</label>
+          <input type="url" id="fbUrlInput" placeholder="https://setlist-manager-37c8f-default-rtdb.europe-west1.firebasedatabase.app" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white font-mono text-[11px] focus:ring-1 focus:ring-emerald-500 focus:outline-none">
         </div>
 
-        <div id="ghModalFeedback" class="hidden text-[11px] rounded-lg p-2 border"></div>
+        <div id="fbModalFeedback" class="hidden text-[11px] rounded-lg p-2 border"></div>
       </div>
 
       <div class="pt-3 border-t border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs">
-        <button onclick="clearGithubConfig()" class="text-rose-400 hover:text-rose-300 px-2 py-1.5 rounded text-[11px]">Desconectar</button>
+        <button onclick="resetToDefaultFirebaseUrl()" class="text-amber-400 hover:text-amber-300 px-2 py-1.5 rounded text-[11px]">Restaurar URL por defecto</button>
         <div class="flex items-center gap-2 ml-auto">
-          <button onclick="closeGithubModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg">Cancelar</button>
-          <button id="ghSaveTestBtn" onclick="saveAndTestGithubConfig()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg font-medium flex items-center gap-1.5">
+          <button onclick="closeFirebaseModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg">Cancelar</button>
+          <button id="fbSaveTestBtn" onclick="saveAndTestFirebaseConfig()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg font-medium flex items-center gap-1.5">
             <span>Guardar y probar</span>
           </button>
         </div>
@@ -272,26 +253,32 @@
         <!-- Render dinámico -->
       </div>
 
-      <!-- SECCIÓN GITHUB / SERVIDOR EN MODAL -->
+      <!-- SECCIÓN NUBE FIREBASE & RESPALDO JSON EN MODAL -->
       <div class="mt-3 pt-3 border-t border-slate-800/90 space-y-2 text-xs">
         <div class="flex items-center justify-between">
-          <span class="text-[10px] uppercase font-bold text-emerald-400 tracking-wider">Sincronización GitHub / Respaldo</span>
-          <button onclick="closeSetlistsModal(); openGithubModal();" class="text-[10px] text-purple-400 hover:text-purple-300 underline">Configurar GitHub</button>
+          <span class="text-[10px] uppercase font-bold text-amber-400 tracking-wider">Nube Firebase &amp; Respaldo JSON</span>
+          <button onclick="closeSetlistsModal(); openFirebaseModal();" class="text-[10px] text-amber-300 hover:text-amber-200 underline">Configurar Firebase</button>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-          <button onclick="syncFromGithub(false)" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-cyan-300 px-2.5 py-1.5 rounded-lg text-[11px] font-medium flex items-center justify-center gap-1.5 transition">
+          <button onclick="syncFromFirebase(false)" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-cyan-300 px-2.5 py-1.5 rounded-lg text-[11px] font-medium flex items-center justify-center gap-1.5 transition">
             <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-            <span>Cargar de GitHub</span>
+            <span>Cargar de Firebase</span>
           </button>
           <button onclick="downloadServerJson()" class="bg-emerald-950/60 hover:bg-emerald-900/60 border border-emerald-700/50 text-emerald-300 px-2.5 py-1.5 rounded-lg text-[11px] font-medium flex items-center justify-center gap-1.5 transition">
             <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
             <span>Descargar setlists.json</span>
           </button>
         </div>
-        <button onclick="triggerJsonBackupImport()" class="w-full bg-slate-950/80 hover:bg-slate-800 border border-slate-800 text-slate-300 px-2.5 py-1.5 rounded-lg text-[11px] flex items-center justify-center gap-1.5 transition">
-          <svg class="w-3.5 h-3.5 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-          <span>Importar copia de seguridad (.json)</span>
-        </button>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+          <button onclick="syncFromStaticServerJson(false)" class="bg-slate-950/80 hover:bg-slate-800 border border-slate-800 text-teal-300 px-2.5 py-1.5 rounded-lg text-[11px] flex items-center justify-center gap-1.5 transition">
+            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path></svg>
+            <span>Cargar ./setlists.json</span>
+          </button>
+          <button onclick="triggerJsonBackupImport()" class="bg-slate-950/80 hover:bg-slate-800 border border-slate-800 text-slate-300 px-2.5 py-1.5 rounded-lg text-[11px] flex items-center justify-center gap-1.5 transition">
+            <svg class="w-3.5 h-3.5 text-purple-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            <span>Importar backup .json</span>
+          </button>
+        </div>
       </div>
       
       <div class="pt-3 border-t border-slate-800 mt-3 flex justify-end">
@@ -328,7 +315,7 @@
     </div>
   </div>
 
-  <!-- MODAL DE CONFIRMACIÓN PERSONALIZADO -->
+  <!-- MODAL DE CONFIRMACIÓN PERSONALIZADO (Sustituye confirm() nativo) -->
   <div id="confirmModal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-3">
     <div class="bg-slate-900 border border-slate-700 w-full max-w-sm rounded-xl shadow-2xl p-4">
       <h3 id="confirmModalTitle" class="font-bold text-sm text-slate-100 mb-1.5">Confirmar acción</h3>
@@ -348,13 +335,19 @@
 
   <!-- LOGOS VECTORIALES Y LÓGICA -->
   <script>
-    // LOGO 1: APRIL CREW
+    // =========================================================================
+    // CONFIGURACIÓN DE FIREBASE REALTIME DATABASE PARA TODA LA BANDA
+    // Normalizada sin barra final para construir `${url}/setlists.json`
+    // =========================================================================
+    const FIREBASE_DEFAULT_URL = "https://setlist-manager-37c8f-default-rtdb.europe-west1.firebasedatabase.app";
+
+    // LOGO 1: APRIL CREW (Vector fiel sin modificar)
     const LOGO_APRIL_CREW_SVG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 500'><circle cx='250' cy='250' r='244' fill='%23ffffff' stroke='%23111111' stroke-width='2'/><g fill='none' stroke='%23111111' stroke-linecap='round'><path d='M 248,255 C 248,318 195,372 132,372 C 66,372 16,320 16,252 C 16,182 68,128 136,128 C 204,128 258,180 258,248' stroke-width='5.5'/><path d='M 254,250 C 254,316 202,368 136,368 C 72,368 22,316 22,250 C 22,184 72,134 136,134 C 200,134 254,184 254,250' stroke-width='3.5'/><path d='M 34,195 C 58,148 104,125 156,130' stroke-width='3'/><path d='M 18,262 C 25,326 76,376 144,375 C 185,374 225,342 268,324 C 318,303 385,303 458,305' stroke-width='6'/><path d='M 136,372 C 182,372 222,340 264,322 C 314,301 382,301 456,304' stroke-width='4'/></g><g fill='%23111111'><path d='M 118,370 L 118,318' stroke='%23111111' stroke-width='2.6' stroke-linecap='round'/><path d='M 118,325 C 106,322 98,312 97,298 C 106,301 114,309 118,321 Z'/><path d='M 118,325 C 130,322 138,312 139,298 C 130,301 122,309 118,321 Z'/><path d='M 118,311 C 107,307 100,297 100,283 C 109,287 115,295 118,307 Z'/><path d='M 118,311 C 129,307 136,297 136,283 C 127,287 121,295 118,307 Z'/><path d='M 118,297 C 108,292 103,283 104,270 C 112,275 116,283 118,293 Z'/><path d='M 118,297 C 128,292 133,283 132,270 C 124,275 120,283 118,293 Z'/><path d='M 118,284 C 110,278 107,270 109,260 C 115,265 117,272 118,280 Z'/><path d='M 118,284 C 126,278 129,270 127,260 C 121,265 119,272 118,280 Z'/><path d='M 118,272 C 114,264 115,256 118,250 C 121,256 122,264 118,272 Z'/><g stroke='%23111111' stroke-width='0.9' stroke-linecap='round'><line x1='99' y1='299' x2='97' y2='293'/><line x1='102' y1='301' x2='100' y2='295'/><line x1='137' y1='299' x2='139' y2='293'/><line x1='134' y1='301' x2='136' y2='295'/><line x1='102' y1='284' x2='100' y2='278'/><line x1='105' y1='286' x2='103' y2='280'/><line x1='134' y1='284' x2='136' y2='278'/><line x1='131' y1='286' x2='133' y2='280'/><line x1='106' y1='271' x2='104' y2='265'/><line x1='130' y1='271' x2='132' y2='265'/></g></g><text x='136' y='256' text-anchor='middle' font-family='Times New Roman, Georgia, serif' font-weight='400' font-size='56' fill='%23111111' letter-spacing='1'>APRIL</text><text x='362' y='293' text-anchor='middle' font-family='Times New Roman, Georgia, serif' font-weight='400' font-size='64' fill='%23111111' letter-spacing='2'>CREW</text></svg>";
 
-    // LOGO 2: LOCAL 13
+    // LOGO 2: LOCAL 13 (Vector fiel sin modificar)
     const LOGO_LOCAL_13_SVG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 500'><rect width='500' height='500' fill='%23ffffff'/><circle cx='105' cy='102' r='15' fill='none' stroke='%231a1a1a' stroke-width='7'/><path d='M390,38 C368,68 352,85 352,102 C352,115 363,125 376,125 C383,125 388,120 390,116 C392,120 397,125 404,125 C417,125 428,115 428,102 C428,85 412,68 390,38 Z' fill='%231a1a1a'/><path d='M387,114 L381,134 L399,134 L393,114 Z' fill='%231a1a1a'/><line x1='364' y1='135' x2='416' y2='135' stroke='%231a1a1a' stroke-width='4' stroke-linecap='round'/><path d='M212,60 A 118 118 0 0 0 132 175 A 118 118 0 0 0 368 175 A 118 118 0 0 0 288 60' fill='none' stroke='%231a1a1a' stroke-width='7' stroke-linecap='round'/><g fill='%231a1a1a'><rect x='74' y='136' width='48' height='7'/><rect x='138' y='136' width='48' height='7'/><rect x='74' y='170' width='46' height='7'/><rect x='136' y='170' width='36' height='7'/><rect x='74' y='204' width='52' height='7'/><rect x='142' y='204' width='22' height='7'/><rect x='314' y='136' width='48' height='7'/><rect x='378' y='136' width='48' height='7'/><rect x='328' y='170' width='36' height='7'/><rect x='380' y='170' width='46' height='7'/><rect x='336' y='204' width='22' height='7'/><rect x='374' y='204' width='52' height='7'/></g><path d='M237,40 L237,82 C215,87 202,102 202,122 C202,138 212,148 212,155 C212,163 182,182 182,216 C182,252 212,272 250,272 C288,272 318,252 318,216 C318,182 288,163 288,155 C288,148 298,138 298,122 C298,102 285,87 263,82 L263,40 Z' fill='%231a1a1a'/><path d='M240,94 C224,98 215,109 215,123 C215,137 226,146 226,156 C226,166 196,182 196,215 C196,243 220,259 250,259 C280,259 304,243 304,215 C304,182 274,166 274,156 C274,146 285,137 285,123 C285,109 276,98 260,94 Z' fill='%23ffffff'/><g stroke='%23ffffff' stroke-width='1.5'><line x1='242.5' y1='40' x2='242.5' y2='95'/><line x1='245.5' y1='40' x2='245.5' y2='95'/><line x1='248.5' y1='40' x2='248.5' y2='95'/><line x1='251.5' y1='40' x2='251.5' y2='95'/><line x1='254.5' y1='40' x2='254.5' y2='95'/><line x1='257.5' y1='40' x2='257.5' y2='95'/></g><circle cx='250' cy='144' r='22' fill='none' stroke='%231a1a1a' stroke-width='2.5'/><circle cx='250' cy='144' r='18.5' fill='%231a1a1a'/><g stroke='%23ffffff' stroke-width='1.3'><line x1='242.5' y1='125' x2='242.5' y2='163'/><line x1='245.5' y1='125' x2='245.5' y2='163'/><line x1='248.5' y1='125' x2='248.5' y2='163'/><line x1='251.5' y1='125' x2='251.5' y2='163'/><line x1='254.5' y1='125' x2='254.5' y2='163'/><line x1='257.5' y1='125' x2='257.5' y2='163'/></g><rect x='224' y='204' width='52' height='15' fill='none' stroke='%231a1a1a' stroke-width='2.2'/><rect x='229' y='207' width='42' height='4' fill='%231a1a1a'/><line x1='232' y1='215' x2='268' y2='215' stroke='%231a1a1a' stroke-width='2' stroke-dasharray='3,2'/><g fill='%231a1a1a'><path d='M74,276 L112,262 L112,428 L190,428 L190,462 L74,462 Z'/><path d='M124,316 L180,302 L180,418 L124,398 Z M142,331 L142,384 L162,392 L162,324 Z'/><path d='M193,328 L254,302 L254,328 L219,344 L219,382 L254,396 L254,422 L193,396 Z'/><path d='M240,418 L280,302 L305,302 L345,402 L286,396 L292,374 L310,376 L292,332 L268,408 Z'/><path d='M316,302 L338,302 L338,382 L396,406 L284,412 L316,302 Z'/><path d='M356,274 L369,268 L369,362 L356,370 Z'/><path d='M375,268 L424,268 L424,338 L375,362 L375,342 L408,326 L408,312 L386,312 L386,296 L408,296 L408,284 L375,284 Z'/></g></svg>";
 
-    // LOGO 3: UNDERGROUND ESCAPE
+    // LOGO 3: UNDERGROUND ESCAPE (Vector fiel sin modificar)
     const LOGO_UNDERGROUND_ESCAPE_SVG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 500'><defs><radialGradient id='bgVig' cx='50%25' cy='48%25' r='55%25'><stop offset='0%25' stop-color='%230c180a'/><stop offset='70%25' stop-color='%23070907'/><stop offset='100%25' stop-color='%23040504'/></radialGradient><filter id='neonGlow' x='-25%25' y='-25%25' width='150%25' height='150%25'><feGaussianBlur stdDeviation='6' result='blur1'/><feGaussianBlur stdDeviation='14' result='blur2'/><feMerge><feMergeNode in='blur2'/><feMergeNode in='blur1'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><rect width='500' height='500' fill='url(%23bgVig)'/><g filter='url(%23neonGlow)'><rect x='92' y='130' width='316' height='195' rx='10' fill='%23050a05' fill-opacity='0.65' stroke='%2376e85b' stroke-width='8'/><g fill='%2376e85b'><circle cx='232' cy='168' r='15'/><path d='M 183,195 C 188,186 202,182 218,182 C 232,182 240,188 246,201 L 256,220 C 258,223 255,227 251,228 L 236,229 L 228,214 L 221,232 L 248,295 C 251,301 248,308 242,310 C 236,312 230,309 227,303 L 204,251 L 183,281 C 180,285 175,288 170,288 L 132,288 C 126,288 122,284 122,279 C 122,273 126,269 132,269 L 164,269 L 188,234 L 193,210 L 179,224 L 171,240 C 168,245 162,247 157,244 C 152,241 151,235 154,230 L 166,209 C 169,203 176,198 183,195 Z'/><path d='M 171,254 L 168,243 L 173,241 L 176,253 Z'/><path d='M 176,264 C 175,259 179,252 183,246 C 186,242 184,237 183,234 C 182,231 185,229 188,231 C 192,235 194,239 199,237 C 204,235 208,228 214,226 C 219,224 223,227 221,231 C 219,235 215,237 217,240 L 260,228 L 262,223 C 264,220 268,219 272,219 L 283,219 C 286,219 288,222 287,225 C 285,228 281,229 277,229 L 273,233 C 270,235 266,236 263,234 L 220,247 C 219,250 223,252 225,255 C 226,259 221,262 216,261 C 211,260 207,257 202,258 C 196,260 192,267 185,270 C 179,272 177,269 176,264 Z'/><circle cx='265' cy='218' r='1.7'/><circle cx='269' cy='218' r='1.7'/><circle cx='273' cy='218' r='1.7'/><circle cx='277' cy='218' r='1.7'/><circle cx='281' cy='218' r='1.7'/><circle cx='285' cy='218' r='1.7'/><polygon points='292,212 332,212 312,180 340,180 385,227 340,274 312,274 332,242 292,242'/></g><text x='250' y='358' text-anchor='middle' font-family='system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif' font-size='23.5' font-weight='700' fill='%2376e85b' letter-spacing='1.2'>UNDERGROUND ESCAPE</text></g></svg>";
 
     const BAND_DATA = {
@@ -408,7 +401,7 @@
 
     // ESTADO DE LA APLICACIÓN
     const LOCAL_DATA_KEY = 'BAND_SETLIST_DATA_V2';
-    const GITHUB_CFG_KEY = 'BAND_SETLIST_GITHUB_CFG_V1';
+    const FIREBASE_URL_STORAGE_KEY = 'BAND_SETLIST_FIREBASE_URL_V1';
 
     let currentBandKey = "april_crew";
     let appData = null;
@@ -417,7 +410,7 @@
     const MAX_UNDO_HISTORY = 30;
     let toastTimeout = null;
     let editingSetlistId = null;
-    let isSavingToGithub = false;
+    let isSavingToFirebase = false;
 
     // INICIALIZACIÓN
     window.addEventListener('DOMContentLoaded', async () => {
@@ -428,14 +421,14 @@
       updateMetrics();
       setModifiedStatus(false);
       updateUndoButtonUI();
-      updateGithubMenuIndicator();
+      updateFirebaseMenuIndicator();
 
-      // Sincronización automática con GitHub si está configurado, o fallback a ./setlists.json si es un navegador nuevo
-      const ghCfg = getGithubConfig();
-      if (ghCfg && ghCfg.owner && ghCfg.repo && ghCfg.token) {
-        await syncFromGithub(true);
+      // Sincronización automática al cargar: Firebase primero, y si no hay Firebase ni datos locales, ./setlists.json
+      const fbUrl = getActiveFirebaseUrl();
+      if (fbUrl) {
+        await syncFromFirebase(true);
       } else if (!hadLocalData) {
-        await syncFromStaticServerJson();
+        await syncFromStaticServerJson(true);
       }
 
       // Cierre de dropdown al hacer clic fuera
@@ -503,51 +496,32 @@
       });
     }
 
-    // UTILIDADES CODIFICACIÓN UTF-8 <-> BASE64 PARA API DE GITHUB
-    function utf8ToBase64(str) {
-      const bytes = new TextEncoder().encode(str);
-      let binString = '';
-      for (let i = 0; i < bytes.length; i++) {
-        binString += String.fromCharCode(bytes[i]);
-      }
-      return btoa(binString);
+    // GESTIÓN DE URL DE FIREBASE REALTIME DATABASE
+    function normalizeFirebaseBaseUrl(rawUrl) {
+      if (!rawUrl) return "";
+      let clean = rawUrl.trim();
+      if (!clean) return "";
+      clean = clean.replace(/\/setlists\.json\/?$/i, '');
+      clean = clean.replace(/\/+$/, '');
+      return clean;
     }
 
-    function base64ToUtf8(base64) {
-      const cleanBase64 = base64.replace(/\s+/g, '');
-      const binString = atob(cleanBase64);
-      const bytes = new Uint8Array(binString.length);
-      for (let i = 0; i < binString.length; i++) {
-        bytes[i] = binString.charCodeAt(i);
-      }
-      return new TextDecoder().decode(bytes);
+    function getActiveFirebaseUrl() {
+      const stored = normalizeFirebaseBaseUrl(localStorage.getItem(FIREBASE_URL_STORAGE_KEY));
+      if (stored) return stored;
+      return normalizeFirebaseBaseUrl(FIREBASE_DEFAULT_URL);
     }
 
-    // GESTIÓN DE CONFIGURACIÓN DE GITHUB
-    function getGithubConfig() {
-      try {
-        const raw = localStorage.getItem(GITHUB_CFG_KEY);
-        if (!raw) return null;
-        return JSON.parse(raw);
-      } catch (e) {
-        return null;
-      }
-    }
-
-    function saveGithubConfigObject(cfg) {
-      localStorage.setItem(GITHUB_CFG_KEY, JSON.stringify(cfg));
-      updateGithubMenuIndicator();
-    }
-
-    function updateGithubMenuIndicator() {
-      const cfg = getGithubConfig();
-      const dot = document.getElementById('ghMenuStatusDot');
-      const label = document.getElementById('ghMenuRepoLabel');
+    function updateFirebaseMenuIndicator() {
+      const url = getActiveFirebaseUrl();
+      const dot = document.getElementById('fbMenuStatusDot');
+      const label = document.getElementById('fbMenuUrlLabel');
       if (!dot || !label) return;
 
-      if (cfg && cfg.owner && cfg.repo && cfg.token) {
+      if (url) {
         dot.className = "w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_#34d399]";
-        label.textContent = `${cfg.owner}/${cfg.repo} (${cfg.branch || 'main'})`;
+        const hostOnly = url.replace(/^https?:\/\//i, '');
+        label.textContent = hostOnly;
         label.className = "block text-[10px] text-emerald-400/90 truncate max-w-[180px]";
       } else {
         dot.className = "w-2 h-2 rounded-full bg-slate-600";
@@ -556,99 +530,76 @@
       }
     }
 
-    function openGithubModal() {
+    function openFirebaseModal() {
       hideDropdownMenu();
-      const cfg = getGithubConfig() || {};
-      document.getElementById('ghOwnerInput').value = cfg.owner || '';
-      document.getElementById('ghRepoInput').value = cfg.repo || '';
-      document.getElementById('ghBranchInput').value = cfg.branch || 'main';
-      document.getElementById('ghPathInput').value = cfg.path || 'setlists.json';
-      document.getElementById('ghTokenInput').value = cfg.token || '';
-
-      const fb = document.getElementById('ghModalFeedback');
+      const currentUrl = getActiveFirebaseUrl();
+      document.getElementById('fbUrlInput').value = currentUrl;
+      const fb = document.getElementById('fbModalFeedback');
       fb.classList.add('hidden');
-      document.getElementById('githubModal').classList.remove('hidden');
+      document.getElementById('firebaseModal').classList.remove('hidden');
     }
 
-    function closeGithubModal() {
-      document.getElementById('githubModal').classList.add('hidden');
+    function closeFirebaseModal() {
+      document.getElementById('firebaseModal').classList.add('hidden');
     }
 
-    function clearGithubConfig() {
-      localStorage.removeItem(GITHUB_CFG_KEY);
-      document.getElementById('ghOwnerInput').value = '';
-      document.getElementById('ghRepoInput').value = '';
-      document.getElementById('ghBranchInput').value = 'main';
-      document.getElementById('ghPathInput').value = 'setlists.json';
-      document.getElementById('ghTokenInput').value = '';
-      updateGithubMenuIndicator();
-      const fb = document.getElementById('ghModalFeedback');
-      fb.textContent = "Conexión con GitHub eliminada de este navegador.";
-      fb.className = "text-[11px] rounded-lg p-2 border border-amber-500/40 bg-amber-500/10 text-amber-300";
+    function resetToDefaultFirebaseUrl() {
+      localStorage.removeItem(FIREBASE_URL_STORAGE_KEY);
+      const defUrl = normalizeFirebaseBaseUrl(FIREBASE_DEFAULT_URL);
+      document.getElementById('fbUrlInput').value = defUrl;
+      updateFirebaseMenuIndicator();
+      const fb = document.getElementById('fbModalFeedback');
+      fb.textContent = "URL por defecto restaurada (" + defUrl + ").";
+      fb.className = "text-[11px] rounded-lg p-2 border border-emerald-500/40 bg-emerald-500/10 text-emerald-300";
       fb.classList.remove('hidden');
     }
 
-    async function saveAndTestGithubConfig() {
-      const owner = document.getElementById('ghOwnerInput').value.trim();
-      const repo = document.getElementById('ghRepoInput').value.trim();
-      const branch = document.getElementById('ghBranchInput').value.trim() || 'main';
-      const path = document.getElementById('ghPathInput').value.trim().replace(/^\/+/, '') || 'setlists.json';
-      const token = document.getElementById('ghTokenInput').value.trim();
-      const fb = document.getElementById('ghModalFeedback');
-      const btn = document.getElementById('ghSaveTestBtn');
+    async function saveAndTestFirebaseConfig() {
+      const rawInput = document.getElementById('fbUrlInput').value;
+      const baseUrl = normalizeFirebaseBaseUrl(rawInput);
+      const fb = document.getElementById('fbModalFeedback');
+      const btn = document.getElementById('fbSaveTestBtn');
 
-      if (!owner || !repo || !token) {
-        fb.textContent = "Completa Usuario, Repositorio y Personal Access Token.";
+      if (!baseUrl || !/^https:\/\/.+\.firebaseio\.com$|^https:\/\/.+\.firebasedatabase\.app$/i.test(baseUrl)) {
+        fb.textContent = "Introduce una URL válida de Firebase Realtime Database (ej: https://setlist-manager-37c8f-default-rtdb.europe-west1.firebasedatabase.app).";
         fb.className = "text-[11px] rounded-lg p-2 border border-rose-500/40 bg-rose-500/10 text-rose-300";
         fb.classList.remove('hidden');
         return;
       }
 
       btn.disabled = true;
-      btn.innerHTML = `<span>Conectando...</span>`;
-
-      const cfg = { owner, repo, branch, path, token };
+      btn.innerHTML = `<span>Probando...</span>`;
 
       try {
-        // Comprobar acceso al repositorio y buscar si el archivo ya existe
-        const encodedPath = path.split('/').map(encodeURIComponent).join('/');
-        const url = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/contents/${encodedPath}?ref=${encodeURIComponent(branch)}`;
-        
-        const res = await fetch(url, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Accept': 'application/vnd.github+json',
-            'X-GitHub-Api-Version': '2022-11-28'
-          }
-        });
+        const endpoint = `${baseUrl}/setlists.json`;
+        const res = await fetch(endpoint, { cache: 'no-store' });
 
-        if (res.status === 200) {
-          saveGithubConfigObject(cfg);
-          fb.textContent = `Conexión correcta. Archivo "${path}" encontrado en GitHub.`;
-          fb.className = "text-[11px] rounded-lg p-2 border border-emerald-500/40 bg-emerald-500/10 text-emerald-300";
-          fb.classList.remove('hidden');
-          showToast("GitHub conectado correctamente");
-        } else if (res.status === 404) {
-          // El archivo aún no existe: probar a crearlo con los repertorios actuales
-          saveGithubConfigObject(cfg);
-          const created = await pushToGithub(cfg, true);
-          if (created) {
-            fb.textContent = `Conexión correcta. Se ha creado "${path}" en tu repositorio.`;
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status} (Revisa las reglas .read/.write en Firebase)`);
+        }
+
+        const existingData = await res.json();
+        localStorage.setItem(FIREBASE_URL_STORAGE_KEY, baseUrl);
+        updateFirebaseMenuIndicator();
+
+        if (existingData === null || !existingData.bands) {
+          const uploaded = await pushToFirebase(baseUrl, true);
+          if (uploaded) {
+            fb.textContent = "Conexión correcta. Base de datos inicializada con tus repertorios actuales.";
             fb.className = "text-[11px] rounded-lg p-2 border border-emerald-500/40 bg-emerald-500/10 text-emerald-300";
             fb.classList.remove('hidden');
+            showToast("Firebase conectado e inicializado");
           } else {
-            fb.textContent = "El repositorio o la rama no existen, o el token no tiene permisos de escritura (Contents: Read & Write).";
-            fb.className = "text-[11px] rounded-lg p-2 border border-rose-500/40 bg-rose-500/10 text-rose-300";
-            fb.classList.remove('hidden');
+            throw new Error("Lectura OK, pero sin permiso de escritura (.write: true)");
           }
         } else {
-          const errJson = await res.json().catch(() => ({}));
-          fb.textContent = `Error de GitHub (${res.status}): ${errJson.message || 'Verifica el usuario, repositorio y token.'}`;
-          fb.className = "text-[11px] rounded-lg p-2 border border-rose-500/40 bg-rose-500/10 text-rose-300";
+          fb.textContent = "Conexión correcta. Se encontraron repertorios guardados en Firebase.";
+          fb.className = "text-[11px] rounded-lg p-2 border border-emerald-500/40 bg-emerald-500/10 text-emerald-300";
           fb.classList.remove('hidden');
+          showToast("Firebase conectado correctamente");
         }
       } catch (err) {
-        fb.textContent = "Error de red al intentar conectar con api.github.com.";
+        fb.textContent = `No se pudo conectar: ${err.message}`;
         fb.className = "text-[11px] rounded-lg p-2 border border-rose-500/40 bg-rose-500/10 text-rose-300";
         fb.classList.remove('hidden');
       } finally {
@@ -657,104 +608,66 @@
       }
     }
 
-    // SUBIR DATOS DIRECTAMENTE A GITHUB (COMMIT AUTOMÁTICO)
-    async function pushToGithub(overrideCfg = null, silentToast = false) {
-      const cfg = overrideCfg || getGithubConfig();
-      if (!cfg || !cfg.owner || !cfg.repo || !cfg.token) return false;
-      if (isSavingToGithub) return false;
+    // GUARDAR EN FIREBASE REALTIME DATABASE (PUT /setlists.json)
+    async function pushToFirebase(overrideUrl = null, silentToast = false) {
+      const baseUrl = overrideUrl || getActiveFirebaseUrl();
+      if (!baseUrl) return false;
+      if (isSavingToFirebase) return false;
 
-      isSavingToGithub = true;
+      isSavingToFirebase = true;
       const badge = document.getElementById('saveStatusBadge');
       if (badge) {
-        badge.textContent = "Subiendo...";
+        badge.textContent = "Sincronizando...";
         badge.className = "text-[10px] sm:text-xs font-semibold px-2 py-1 rounded-md border border-cyan-500/40 bg-cyan-500/10 text-cyan-300 transition-colors whitespace-nowrap";
       }
 
       try {
-        const branch = cfg.branch || 'main';
-        const path = (cfg.path || 'setlists.json').replace(/^\/+/, '');
-        const encodedPath = path.split('/').map(encodeURIComponent).join('/');
-        const baseUrl = `https://api.github.com/repos/${encodeURIComponent(cfg.owner)}/${encodeURIComponent(cfg.repo)}/contents/${encodedPath}`;
-
-        // 1. Obtener el SHA actual del archivo (si existe) para poder sobrescribirlo
-        let currentSha = null;
-        const getRes = await fetch(`${baseUrl}?ref=${encodeURIComponent(branch)}&_t=${Date.now()}`, {
-          headers: {
-            'Authorization': `Bearer ${cfg.token}`,
-            'Accept': 'application/vnd.github+json',
-            'X-GitHub-Api-Version': '2022-11-28'
-          }
-        });
-
-        if (getRes.status === 200) {
-          const fileMeta = await getRes.json();
-          currentSha = fileMeta.sha;
-        } else if (getRes.status !== 404) {
-          throw new Error(`HTTP ${getRes.status}`);
-        }
-
-        // 2. Preparar contenido JSON formateado
+        const endpoint = `${baseUrl}/setlists.json`;
         const payloadObj = {
           version: "2.0",
           updatedAt: new Date().toISOString(),
           activeBand: currentBandKey,
           bands: appData.bands
         };
-        const jsonString = JSON.stringify(payloadObj, null, 2);
-        const contentBase64 = utf8ToBase64(jsonString);
 
-        const bodyData = {
-          message: `Actualizar setlists (${new Date().toLocaleString('es-ES')})`,
-          content: contentBase64,
-          branch: branch
-        };
-        if (currentSha) {
-          bodyData.sha = currentSha;
-        }
-
-        // 3. Hacer PUT a la API de GitHub
-        const putRes = await fetch(baseUrl, {
+        const putRes = await fetch(endpoint, {
           method: 'PUT',
           headers: {
-            'Authorization': `Bearer ${cfg.token}`,
-            'Accept': 'application/vnd.github+json',
-            'Content-Type': 'application/json',
-            'X-GitHub-Api-Version': '2022-11-28'
+            'Content-Type': 'application/json'
           },
-          body: JSON.stringify(bodyData)
+          body: JSON.stringify(payloadObj)
         });
 
         if (!putRes.ok) {
-          const errData = await putRes.json().catch(() => ({}));
-          throw new Error(errData.message || `Error HTTP ${putRes.status}`);
+          throw new Error(`HTTP ${putRes.status}`);
         }
 
         isModified = false;
         setModifiedStatus(false);
         if (!silentToast) {
-          showToast("Guardado en el navegador y en GitHub");
+          showToast("Guardado en el navegador y en Firebase");
         }
         return true;
       } catch (err) {
-        console.error("Error subiendo a GitHub:", err);
+        console.error("Error subiendo a Firebase:", err);
         setModifiedStatus(true);
         if (!silentToast) {
-          showToast(`Guardado local, pero falló GitHub: ${err.message}`, "error");
+          showToast(`Guardado local, pero falló Firebase (${err.message})`, "error");
         }
         return false;
       } finally {
-        isSavingToGithub = false;
+        isSavingToFirebase = false;
       }
     }
 
-    // DESCARGAR DATOS DESDE GITHUB
-    async function syncFromGithub(isSilentAutoLoad = false) {
-      const cfg = getGithubConfig();
-      if (!cfg || !cfg.owner || !cfg.repo || !cfg.token) {
+    // CARGAR DESDE FIREBASE REALTIME DATABASE (GET /setlists.json)
+    async function syncFromFirebase(isSilentAutoLoad = false) {
+      const baseUrl = getActiveFirebaseUrl();
+      if (!baseUrl) {
         if (!isSilentAutoLoad) {
           hideDropdownMenu();
-          openGithubModal();
-          showToast("Configura primero tu repositorio de GitHub", "warning");
+          openFirebaseModal();
+          showToast("Configura primero la URL de Firebase", "warning");
         }
         return;
       }
@@ -763,42 +676,29 @@
         hideDropdownMenu();
         if (isModified) {
           const ok = await openConfirmDialog(
-            "Sincronizar desde GitHub",
-            "Tienes cambios sin guardar. Si descargas la versión de GitHub se sobrescribirán tus listas actuales (podrás volver atrás con Deshacer). ¿Continuar?"
+            "Sincronizar desde Firebase",
+            "Tienes cambios sin guardar. Si descargas los datos de Firebase se sobrescribirán tus listas actuales (podrás volver atrás con Deshacer). ¿Continuar?"
           );
           if (!ok) return;
         }
       }
 
       try {
-        const branch = cfg.branch || 'main';
-        const path = (cfg.path || 'setlists.json').replace(/^\/+/, '');
-        const encodedPath = path.split('/').map(encodeURIComponent).join('/');
-        const url = `https://api.github.com/repos/${encodeURIComponent(cfg.owner)}/${encodeURIComponent(cfg.repo)}/contents/${encodedPath}?ref=${encodeURIComponent(branch)}&_t=${Date.now()}`;
-
-        const res = await fetch(url, {
-          headers: {
-            'Authorization': `Bearer ${cfg.token}`,
-            'Accept': 'application/vnd.github+json',
-            'X-GitHub-Api-Version': '2022-11-28'
-          }
-        });
+        const endpoint = `${baseUrl}/setlists.json?_t=${Date.now()}`;
+        const res = await fetch(endpoint, { cache: 'no-store' });
 
         if (!res.ok) {
           if (!isSilentAutoLoad) {
-            showToast(`No se pudo descargar de GitHub (HTTP ${res.status})`, "warning");
+            showToast(`No se pudo descargar de Firebase (HTTP ${res.status})`, "warning");
           }
           return;
         }
 
-        const fileObj = await res.json();
-        if (!fileObj.content) return;
-
-        const decodedText = base64ToUtf8(fileObj.content);
-        const remoteData = JSON.parse(decodedText);
+        const remoteData = await res.json();
         if (!remoteData || !remoteData.bands) {
+          // Si Firebase está vacío (primer uso), mantenemos los datos locales por defecto sin error
           if (!isSilentAutoLoad) {
-            showToast("El archivo de GitHub no tiene un formato válido.", "error");
+            showToast("Firebase aún no tiene repertorios guardados. Pulsa Guardar para subir los actuales.", "warning");
           }
           return;
         }
@@ -812,30 +712,57 @@
         isModified = false;
         setModifiedStatus(false);
 
-        showToast(isSilentAutoLoad ? "Sincronizado con GitHub" : "Repertorios actualizados desde GitHub");
+        showToast(isSilentAutoLoad ? "Sincronizado con Firebase" : "Repertorios actualizados desde Firebase");
       } catch (err) {
-        console.error("Error leyendo desde GitHub:", err);
+        console.error("Error leyendo desde Firebase:", err);
         if (!isSilentAutoLoad) {
-          showToast("Error al sincronizar con GitHub", "error");
+          showToast("Error de conexión con Firebase", "error");
         }
       }
     }
 
-    // Fallback estático por si se abre sin configurar token pero existe ./setlists.json público
-    async function syncFromStaticServerJson() {
+    // CARGAR ARCHIVO ESTÁTICO ./setlists.json DEL SERVIDOR
+    async function syncFromStaticServerJson(isSilentAutoLoad = false) {
+      if (!isSilentAutoLoad) {
+        hideDropdownMenu();
+        if (isModified) {
+          const ok = await openConfirmDialog(
+            "Cargar ./setlists.json del servidor",
+            "Tienes cambios sin guardar. Si cargas setlists.json del servidor se reemplazarán tus listas actuales (puedes revertirlo con Deshacer). ¿Continuar?"
+          );
+          if (!ok) return;
+        }
+      }
+
       try {
-        const response = await fetch('./setlists.json', { cache: 'no-store' });
-        if (!response.ok) return;
+        const response = await fetch('./setlists.json?_t=' + Date.now(), { cache: 'no-store' });
+        if (!response.ok) {
+          if (!isSilentAutoLoad) {
+            showToast("No se encontró ./setlists.json en la carpeta del servidor.", "warning");
+          }
+          return;
+        }
         const remoteData = await response.json();
-        if (!remoteData || !remoteData.bands) return;
+        if (!remoteData || !remoteData.bands) {
+          if (!isSilentAutoLoad) {
+            showToast("El archivo ./setlists.json no tiene un formato válido.", "error");
+          }
+          return;
+        }
+
+        if (!isSilentAutoLoad) {
+          pushUndoSnapshot();
+        }
 
         applyImportedAppData(remoteData);
         localStorage.setItem(LOCAL_DATA_KEY, JSON.stringify(appData));
         isModified = false;
         setModifiedStatus(false);
-        showToast("Listas iniciales cargadas desde setlists.json");
+        showToast("Repertorios cargados desde ./setlists.json");
       } catch (e) {
-        // Silencioso si no existe archivo estático
+        if (!isSilentAutoLoad) {
+          showToast("No se pudo acceder a ./setlists.json en el servidor.", "warning");
+        }
       }
     }
 
@@ -1035,7 +962,7 @@
           pushUndoSnapshot();
           applyImportedAppData(parsed);
           markAsModified();
-          showToast("Copia de seguridad JSON restaurada");
+          showToast("Copia de seguridad JSON importada");
         } catch (err) {
           showToast("Error al leer el archivo JSON.", "error");
         }
@@ -1080,7 +1007,7 @@
       }
     }
 
-    // CONTROL DE ESTADO MANUAL Y GUARDADO (LOCAL + GITHUB)
+    // CONTROL DE ESTADO MANUAL Y GUARDADO (LOCAL + FIREBASE)
     function markAsModified() {
       isModified = true;
       setModifiedStatus(true);
@@ -1107,13 +1034,13 @@
         return;
       }
 
-      const ghCfg = getGithubConfig();
-      if (ghCfg && ghCfg.owner && ghCfg.repo && ghCfg.token) {
-        await pushToGithub(ghCfg, false);
+      const fbUrl = getActiveFirebaseUrl();
+      if (fbUrl) {
+        await pushToFirebase(fbUrl, false);
       } else {
         isModified = false;
         setModifiedStatus(false);
-        showToast("Guardado localmente (Configura GitHub en ⋮ para subir a la nube)");
+        showToast("Guardado localmente");
       }
     }
 
@@ -1484,7 +1411,7 @@
           div.innerHTML = `
             <input type="text" id="renameInput_${id}" value="${escapeHtml(item.name)}" class="bg-slate-950 border border-emerald-500 rounded px-2 py-1 text-xs text-white flex-1 min-w-0 focus:outline-none" onkeydown="if(event.key==='Enter') confirmRenameSetlist('${id}'); if(event.key==='Escape') cancelRenameSetlist();">
             <div class="flex items-center gap-1 shrink-0">
-              <button onclick="confirmRenameSetlist('${id}')" class="px-2 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded text-[11px] font-medium">OK</button>
+              <button onclick="confirmRenameSetlist('${id}')" class="px-2 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded text-[11px] font-medium">Guardar</button>
               <button onclick="cancelRenameSetlist()" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-[11px]">Cancelar</button>
             </div>
           `;
