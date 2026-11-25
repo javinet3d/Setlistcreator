@@ -2,8 +2,17 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Setlist Manager - April Crew / Local 13 / Underground Escape</title>
+  <meta name="description" content="Gestor de repertorios en directo para April Crew, Local 13 y Underground Escape">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Setlist">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230A0F1D'/%3E%3Ccircle cx='11' cy='21' r='3' fill='%23FFAB00'/%3E%3Cpath d='M14 10v11' stroke='%23FFAB00' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M8 10h12M8 15h8' stroke='%23FFAB00' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -24,105 +33,106 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen relative flex flex-col font-sans select-none antialiased overflow-x-hidden">
 
-  <!-- MARCA DE AGUA DE FONDO DINÁMICA SEGÚN BANDA -->
+  <!-- MARCA DE AGUA DE FONDO (LOGO REAL POR GRUPO) -->
   <div class="fixed inset-0 pointer-events-none flex items-center justify-center z-0 overflow-hidden print-watermark">
-    <div id="bgWatermark" class="w-[85vw] max-w-[550px] aspect-square rounded-full transition-all duration-500 opacity-[0.08] bg-center bg-no-repeat bg-contain filter contrast-125"></div>
+    <div id="bgWatermark" class="w-[85vw] max-w-[550px] aspect-square rounded-full transition-all duration-500 opacity-[0.07] bg-center bg-no-repeat bg-contain filter contrast-125"></div>
   </div>
 
-  <!-- CABECERA PRINCIPAL: SELECTOR DE GRUPO + ACCIONES SUPERIORES SIN SOLAPAMIENTOS -->
-  <header class="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 shadow-lg px-3 py-2 no-print">
-    <div class="max-w-4xl mx-auto flex flex-wrap items-center justify-between gap-2">
+  <!-- CABECERA PRINCIPAL (SIN SOLAPAMIENTOS) -->
+  <header class="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 shadow-lg no-print">
+    <div class="max-w-4xl mx-auto px-3 py-2 flex items-center justify-between gap-2">
       
-      <!-- IZQUIERDA: AVATAR + SELECTOR DE GRUPO EXCLUSIVO -->
-      <div class="flex items-center gap-2 min-w-0 flex-shrink-0">
-        <div id="bandAvatar" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-800 border border-slate-700 bg-center bg-contain bg-no-repeat shrink-0 shadow-inner overflow-hidden"></div>
-        
-        <div class="relative">
-          <select id="bandSelect" onchange="changeBand(this.value)" class="bg-slate-800 text-xs sm:text-sm font-bold text-emerald-400 hover:text-emerald-300 border border-slate-700 rounded-lg px-2 sm:px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer transition shadow-sm max-w-[140px] sm:max-w-none truncate">
-            <option value="april_crew">April Crew</option>
-            <option value="local_13">Local 13</option>
-            <option value="underground_escape">Underground Escape</option>
-          </select>
-        </div>
+      <!-- IZQUIERDA: AVATAR + SELECTOR DE GRUPO -->
+      <div class="flex items-center gap-2 min-w-0 max-w-[165px] sm:max-w-[260px] shrink-0">
+        <div id="bandAvatar" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-800 border border-slate-700 bg-center bg-contain bg-no-repeat shrink-0 shadow-inner"></div>
+        <select id="bandSelect" onchange="changeBand(this.value)" class="w-full min-w-0 truncate bg-slate-800 text-xs sm:text-sm font-bold text-emerald-400 hover:text-emerald-300 border border-slate-700 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer">
+          <option value="april_crew">April Crew</option>
+          <option value="local_13">Local 13</option>
+          <option value="underground_escape">Underground Escape</option>
+        </select>
       </div>
 
-      <!-- DERECHA: ESTADO, DESHACER, GUARDAR, +TEMA Y MENÚ -->
-      <div class="flex items-center gap-1 sm:gap-1.5 shrink-0 ml-auto">
-        <!-- Indicador de Estado de Guardado / Firebase -->
-        <span id="saveStatusBadge" class="text-[10px] sm:text-xs font-semibold px-2 py-1 rounded-md border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 transition-colors whitespace-nowrap">
+      <!-- DERECHA: GUARDADO, DESHACER Y MENÚ -->
+      <div class="flex items-center gap-1.5 sm:gap-2 ml-auto shrink-0">
+        <!-- Botón Instalar App (visible cuando Chrome dispara beforeinstallprompt) -->
+        <button id="installPwaBtn" onclick="installPwa()" class="hidden bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold px-2 py-1 rounded shadow flex items-center gap-1 active:scale-95 transition" title="Instalar aplicación en el dispositivo">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+          <span class="hidden sm:inline">Instalar</span>
+        </button>
+
+        <!-- Estado de Guardado / Sincronización -->
+        <span id="saveStatusBadge" class="text-[10px] sm:text-xs font-semibold px-1.5 sm:px-2 py-0.5 rounded border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 transition-colors">
           Guardado
         </span>
 
         <!-- Botón Deshacer (Undo) -->
-        <button id="undoBtn" onclick="undoLastAction()" disabled class="bg-slate-800/50 text-slate-600 border border-slate-800 text-xs font-medium px-2 py-1.5 rounded-lg flex items-center gap-1 transition cursor-not-allowed" title="Nada que deshacer">
-          <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
+        <button id="undoBtn" onclick="undoLastAction()" disabled class="bg-slate-800 hover:bg-slate-700 disabled:opacity-35 disabled:pointer-events-none text-slate-200 text-xs font-medium px-2 py-1 rounded border border-slate-700 flex items-center gap-1 active:scale-95 transition" title="Deshacer último cambio (Ctrl+Z)">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
           <span class="hidden md:inline">Deshacer</span>
         </button>
 
-        <!-- Botón Guardar (Local + Firebase) -->
-        <button id="saveBtn" onclick="saveManual()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-2 sm:px-2.5 py-1.5 rounded-lg shadow flex items-center gap-1 active:scale-95 transition" title="Guardar cambios (Local + Firebase)">
-          <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+        <!-- Botón Guardar en Firebase + Local -->
+        <button onclick="saveManual()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-2 sm:px-2.5 py-1 rounded shadow flex items-center gap-1 active:scale-95 transition" title="Guardar en Firebase y navegador">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
           <span class="hidden sm:inline">Guardar</span>
         </button>
 
-        <!-- Botón + Añadir Canción -->
-        <button onclick="openAddModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium px-2 py-1.5 rounded-lg border border-slate-700 flex items-center gap-1 active:scale-95 transition" title="Añadir canción">
-          <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-          <span class="hidden sm:inline">Tema</span>
+        <!-- Botón + Añadir Canción Directa -->
+        <button onclick="openAddModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium px-2 py-1 rounded border border-slate-700 flex items-center gap-1 active:scale-95 transition" title="Añadir canción">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+          <span class="hidden md:inline">Tema</span>
         </button>
 
-        <!-- MENÚ DESPLEGABLE SUPERIOR DERECHO (3 Puntos) -->
+        <!-- MENÚ DESPLEGABLE SUPERIOR DERECHO -->
         <div class="relative">
-          <button id="menuToggleBtn" onclick="toggleDropdownMenu(event)" class="bg-slate-800 hover:bg-slate-700 text-slate-200 p-1.5 rounded-lg border border-slate-700 flex items-center justify-center active:scale-95 transition" title="Más opciones">
+          <button id="menuToggleBtn" onclick="toggleDropdownMenu(event)" class="bg-slate-800 hover:bg-slate-700 text-slate-200 p-1.5 rounded border border-slate-700 flex items-center justify-center active:scale-95 transition" title="Menú de opciones">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path></svg>
           </button>
 
           <!-- Ventana flotante de menú -->
-          <div id="actionMenu" class="hidden absolute right-0 mt-2 w-64 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl py-1.5 z-50 text-xs">
-            <div class="px-3 py-1 border-b border-slate-800 text-[10px] uppercase font-bold text-slate-400">Archivos y Listas</div>
-            
-            <button onclick="triggerTxtImport()" class="w-full text-left px-3 py-2 hover:bg-slate-800 flex items-center gap-2 text-slate-200">
-              <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-              <span>Importar TXT (1 o varios)</span>
+          <div id="actionMenu" class="hidden absolute right-0 mt-2 w-64 bg-slate-900 border border-slate-700 rounded-lg shadow-2xl py-1 z-50 text-xs">
+            <div class="px-3 py-1.5 border-b border-slate-800 text-[10px] uppercase font-bold text-slate-400">Nube Firebase</div>
+
+            <button onclick="syncFromFirebase(true); hideDropdownMenu();" class="w-full text-left px-3 py-2 hover:bg-slate-800 flex items-center gap-2 text-slate-200">
+              <svg class="w-4 h-4 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+              <span>Sincronizar desde Firebase</span>
             </button>
 
-            <button onclick="exportTxt()" class="w-full text-left px-3 py-2 hover:bg-slate-800 flex items-center gap-2 text-slate-200">
-              <svg class="w-4 h-4 text-blue-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-              <span>Exportar lista actual a TXT</span>
+            <button onclick="openFirebaseModal()" class="w-full text-left px-3 py-2 hover:bg-slate-800 flex items-center gap-2 text-slate-200">
+              <svg class="w-4 h-4 text-orange-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"></path></svg>
+              <span>Configurar URL Firebase</span>
             </button>
 
             <div class="border-t border-slate-800 my-1"></div>
-            <div class="px-3 py-1 flex items-center justify-between text-[10px] uppercase font-bold text-amber-400/90">
-              <span>Nube Firebase &amp; JSON</span>
-              <span id="fbMenuStatusDot" class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_#34d399]" title="Firebase activo"></span>
-            </div>
+            <div class="px-3 py-1 text-[10px] uppercase font-bold text-slate-400">Copia JSON (Backup)</div>
 
-            <button onclick="syncFromFirebase(false)" class="w-full text-left px-3 py-2 hover:bg-slate-800 flex items-start gap-2 text-slate-200">
-              <svg class="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-              <span class="leading-tight">Sincronizar ahora (Firebase) <span class="block text-[10px] text-slate-400">Descargar última versión</span></span>
-            </button>
-
-            <button onclick="openFirebaseModal()" class="w-full text-left px-3 py-2 hover:bg-slate-800 flex items-start gap-2 text-slate-200">
-              <svg class="w-4 h-4 text-amber-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path></svg>
-              <span class="leading-tight">Configurar Firebase <span id="fbMenuUrlLabel" class="block text-[10px] text-emerald-400/90 truncate max-w-[180px]">setlist-manager-37c8f...</span></span>
-            </button>
-
-            <button onclick="downloadServerJson()" class="w-full text-left px-3 py-2 hover:bg-slate-800 flex items-center gap-2 text-slate-200">
+            <button onclick="downloadMasterJson()" class="w-full text-left px-3 py-2 hover:bg-slate-800 flex items-center gap-2 text-slate-200">
               <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
               <span>Descargar setlists.json</span>
             </button>
 
-            <button onclick="syncFromStaticServerJson(false)" class="w-full text-left px-3 py-2 hover:bg-slate-800 flex items-center gap-2 text-slate-200">
-              <svg class="w-4 h-4 text-teal-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path></svg>
-              <span>Cargar ./setlists.json del servidor</span>
+            <button onclick="loadFromServerJson(true); hideDropdownMenu();" class="w-full text-left px-3 py-2 hover:bg-slate-800 flex items-center gap-2 text-slate-200">
+              <svg class="w-4 h-4 text-cyan-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path></svg>
+              <span>Cargar ./setlists.json local</span>
             </button>
 
-            <button onclick="triggerJsonBackupImport()" class="w-full text-left px-3 py-2 hover:bg-slate-800 flex items-center gap-2 text-slate-200">
-              <svg class="w-4 h-4 text-purple-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-              <span>Importar backup .json</span>
+            <button onclick="triggerJsonImport()" class="w-full text-left px-3 py-2 hover:bg-slate-800 flex items-center gap-2 text-slate-200">
+              <svg class="w-4 h-4 text-teal-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+              <span>Importar archivo .json</span>
             </button>
 
             <div class="border-t border-slate-800 my-1"></div>
+            <div class="px-3 py-1 text-[10px] uppercase font-bold text-slate-400">Listas y TXT</div>
+
+            <button onclick="triggerTxtImport()" class="w-full text-left px-3 py-2 hover:bg-slate-800 flex items-center gap-2 text-slate-200">
+              <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+              <span>Importar TXT (1 o varios)</span>
+            </button>
+
+            <button onclick="exportTxt()" class="w-full text-left px-3 py-2 hover:bg-slate-800 flex items-center gap-2 text-slate-200">
+              <svg class="w-4 h-4 text-blue-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+              <span>Exportar lista actual a TXT</span>
+            </button>
 
             <button onclick="openSetlistsModal()" class="w-full text-left px-3 py-2 hover:bg-slate-800 flex items-center gap-2 text-slate-200">
               <svg class="w-4 h-4 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
@@ -130,33 +140,32 @@
             </button>
 
             <button onclick="window.print(); hideDropdownMenu();" class="w-full text-left px-3 py-2 hover:bg-slate-800 flex items-center gap-2 text-slate-200">
-              <svg class="w-4 h-4 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4H7v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+              <svg class="w-4 h-4 text-purple-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4H7v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
               <span>Imprimir / PDF</span>
             </button>
           </div>
         </div>
-
       </div>
     </div>
 
-    <!-- SUB-BARRA: SELECTOR DE REPERTORIO ACTIVO -->
-    <div class="max-w-4xl mx-auto pt-2 pb-0.5 flex items-center justify-between text-xs border-t border-slate-800/60 mt-1.5">
-      <div class="flex items-center gap-2 w-full">
-        <span class="text-slate-400 text-[11px] font-medium shrink-0">Repertorio:</span>
-        <div class="flex-1 min-w-0 relative">
-          <select id="setlistSelect" onchange="switchSetlist(this.value)" class="w-full bg-slate-950/70 text-slate-200 border border-slate-700/80 rounded-lg px-2.5 py-1 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer truncate">
+    <!-- SUB-BARRA INFERIOR: SELECTOR DE REPERTORIO -->
+    <div class="bg-slate-950/60 border-t border-slate-800/80 px-3 py-1.5">
+      <div class="max-w-4xl mx-auto flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2 min-w-0 flex-1">
+          <span class="text-[10px] uppercase font-bold tracking-wider text-slate-500 shrink-0">Repertorio:</span>
+          <select id="setlistSelect" onchange="switchSetlist(this.value)" class="bg-slate-900 text-xs text-slate-200 font-medium hover:text-white border border-slate-800 rounded px-2 py-0.5 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer truncate max-w-full flex-1 sm:max-w-xs">
           </select>
         </div>
-        <button onclick="openSetlistsModal()" class="shrink-0 bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-emerald-400 text-[11px] px-2.5 py-1 rounded-lg border border-slate-700 transition flex items-center gap-1" title="Administrar repertorios">
-          <svg class="w-3.5 h-3.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-          <span class="hidden sm:inline">Repertorios</span>
+        <button onclick="openSetlistsModal()" class="text-[11px] text-slate-400 hover:text-emerald-400 shrink-0 flex items-center gap-1 transition">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+          <span>Gestionar</span>
         </button>
       </div>
     </div>
   </header>
 
   <!-- PANEL SUPERIOR: MINUTAJE Y RESUMEN EN VIVO -->
-  <section class="relative z-10 max-w-4xl w-full mx-auto px-3 pt-3 pb-1 no-print">
+  <section class="relative z-10 max-w-4xl w-full mx-auto px-3 pt-3 pb-1">
     <div class="bg-slate-900/80 border border-slate-800/80 rounded-xl p-3 shadow-md grid grid-cols-2 sm:grid-cols-3 gap-2 text-center">
       
       <!-- Duración marcados (En Escenario) -->
@@ -174,11 +183,11 @@
       </div>
 
       <!-- Acciones de marcado rápido -->
-      <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-2 col-span-2 sm:col-span-1 flex flex-row sm:flex-col justify-center items-center gap-2">
-        <button onclick="toggleSelectAll(true)" class="text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded-md border border-slate-700 w-full active:scale-95 transition">
+      <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-2 col-span-2 sm:col-span-1 flex flex-row sm:flex-col justify-center items-center gap-2 no-print">
+        <button onclick="toggleSelectAll(true)" class="text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded border border-slate-700 w-full active:scale-95 transition">
           Marcar Todo
         </button>
-        <button onclick="toggleSelectAll(false)" class="text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-200 px-2.5 py-1 rounded-md border border-slate-700 w-full active:scale-95 transition">
+        <button onclick="toggleSelectAll(false)" class="text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-200 px-2.5 py-1 rounded border border-slate-700 w-full active:scale-95 transition">
           Desmarcar Todo
         </button>
       </div>
@@ -196,41 +205,38 @@
     </div>
   </main>
 
-  <!-- INPUTS OCULTOS PARA IMPORTAR ARCHIVOS -->
+  <!-- INPUTS OCULTOS PARA IMPORTAR TXT Y JSON -->
   <input type="file" id="txtFileInput" accept=".txt" multiple class="hidden" onchange="handleTxtFilesSelected(event)">
-  <input type="file" id="jsonFileInput" accept=".json,application/json" class="hidden" onchange="handleJsonBackupSelected(event)">
+  <input type="file" id="jsonFileInput" accept=".json,application/json" class="hidden" onchange="handleJsonFileSelected(event)">
 
-  <!-- MODAL: CONFIGURACIÓN DE FIREBASE REALTIME DATABASE -->
-  <div id="firebaseModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3">
-    <div class="bg-slate-900 border border-slate-700 w-full max-w-md rounded-xl shadow-2xl p-4 flex flex-col max-h-[90vh]">
+  <!-- MODAL: CONFIGURAR FIREBASE REALTIME DATABASE -->
+  <div id="firebaseModal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-3">
+    <div class="bg-slate-900 border border-slate-700 w-full max-w-md rounded-xl shadow-2xl p-4">
       <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-        <div class="flex items-center gap-2">
-          <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path></svg>
-          <h3 class="font-bold text-sm text-slate-100">Conectar Firebase Realtime Database</h3>
-        </div>
-        <button onclick="closeFirebaseModal()" class="text-slate-400 hover:text-white text-xl leading-none px-1">&times;</button>
+        <h3 class="font-bold text-sm text-slate-200 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-orange-400"></span>
+          <span>Conexión con Firebase Realtime Database</span>
+        </h3>
+        <button onclick="closeFirebaseModal()" class="text-slate-400 hover:text-white text-lg">&times;</button>
       </div>
 
-      <div class="my-3 space-y-3 overflow-y-auto pr-1 custom-scrollbar text-xs">
-        <p class="text-[11px] text-slate-300 leading-relaxed bg-slate-950/70 border border-slate-800 rounded-lg p-2.5">
-          URL de <strong>Firebase Realtime Database</strong> compartida con toda la banda. Cada pulsación en <strong>Guardar</strong> sincroniza automáticamente todos los repertorios en <code class="text-emerald-400">/setlists.json</code>.
-        </p>
+      <p class="text-[11px] text-slate-400 mt-2.5 leading-relaxed">
+        URL de tu Realtime Database. Al pulsar <strong class="text-slate-200">Guardar</strong>, los setlists se sincronizan en la nube para toda la banda sin pedir claves.
+      </p>
 
+      <div class="space-y-3 text-xs mt-3">
         <div>
           <label class="block text-slate-400 mb-1">URL de Firebase Realtime Database</label>
-          <input type="url" id="fbUrlInput" placeholder="https://setlist-manager-37c8f-default-rtdb.europe-west1.firebasedatabase.app" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white font-mono text-[11px] focus:ring-1 focus:ring-emerald-500 focus:outline-none">
+          <input type="url" id="fbUrlInput" placeholder="https://setlist-manager-37c8f-default-rtdb.europe-west1.firebasedatabase.app/" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white font-mono text-[11px] focus:ring-1 focus:ring-emerald-500 focus:outline-none">
         </div>
-
-        <div id="fbModalFeedback" class="hidden text-[11px] rounded-lg p-2 border"></div>
+        <div id="fbStatusMsg" class="text-[11px] text-slate-400 hidden"></div>
       </div>
 
-      <div class="pt-3 border-t border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs">
-        <button onclick="resetToDefaultFirebaseUrl()" class="text-amber-400 hover:text-amber-300 px-2 py-1.5 rounded text-[11px]">Restaurar URL por defecto</button>
-        <div class="flex items-center gap-2 ml-auto">
-          <button onclick="closeFirebaseModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg">Cancelar</button>
-          <button id="fbSaveTestBtn" onclick="saveAndTestFirebaseConfig()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg font-medium flex items-center gap-1.5">
-            <span>Guardar y probar</span>
-          </button>
+      <div class="mt-4 flex flex-wrap justify-between gap-2 text-xs">
+        <button onclick="resetFirebaseUrl()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded">Restaurar URL por defecto</button>
+        <div class="flex gap-2">
+          <button onclick="closeFirebaseModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded">Cancelar</button>
+          <button onclick="saveFirebaseConfig()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded font-medium">Guardar y Sincronizar</button>
         </div>
       </div>
     </div>
@@ -238,51 +244,31 @@
 
   <!-- MODAL: GESTIÓN DE REPERTORIOS -->
   <div id="setlistsModal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-3">
-    <div class="bg-slate-900 border border-slate-700 w-full max-w-md rounded-xl shadow-2xl p-4 flex flex-col max-h-[88vh]">
+    <div class="bg-slate-900 border border-slate-700 w-full max-w-md rounded-xl shadow-2xl p-4 flex flex-col max-h-[85vh]">
       <div class="flex items-center justify-between pb-3 border-b border-slate-800">
         <h3 class="font-bold text-sm text-slate-200">Repertorios de la Banda</h3>
-        <button onclick="closeSetlistsModal()" class="text-slate-400 hover:text-white text-xl leading-none px-1">&times;</button>
+        <button onclick="closeSetlistsModal()" class="text-slate-400 hover:text-white text-lg">&times;</button>
       </div>
       
       <div class="my-3 flex gap-2">
-        <input type="text" id="newSetlistNameInput" placeholder="Nombre nuevo repertorio..." class="bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white flex-1 focus:ring-1 focus:ring-emerald-500 focus:outline-none" onkeydown="if(event.key==='Enter') createSetlist()">
-        <button onclick="createSetlist()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-3 py-1.5 rounded-lg font-medium shrink-0">Crear</button>
+        <input type="text" id="newSetlistNameInput" placeholder="Nombre nueva lista..." class="bg-slate-950 border border-slate-700 rounded px-3 py-1.5 text-xs text-white flex-1 focus:ring-1 focus:ring-emerald-500 focus:outline-none">
+        <button onclick="createSetlist()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-3 py-1.5 rounded font-medium">Crear</button>
       </div>
 
       <div id="modalSetlistItems" class="space-y-1.5 overflow-y-auto flex-1 pr-1 custom-scrollbar text-xs">
         <!-- Render dinámico -->
       </div>
 
-      <!-- SECCIÓN NUBE FIREBASE & RESPALDO JSON EN MODAL -->
-      <div class="mt-3 pt-3 border-t border-slate-800/90 space-y-2 text-xs">
-        <div class="flex items-center justify-between">
-          <span class="text-[10px] uppercase font-bold text-amber-400 tracking-wider">Nube Firebase &amp; Respaldo JSON</span>
-          <button onclick="closeSetlistsModal(); openFirebaseModal();" class="text-[10px] text-amber-300 hover:text-amber-200 underline">Configurar Firebase</button>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-          <button onclick="syncFromFirebase(false)" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-cyan-300 px-2.5 py-1.5 rounded-lg text-[11px] font-medium flex items-center justify-center gap-1.5 transition">
-            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-            <span>Cargar de Firebase</span>
+      <div class="pt-3 border-t border-slate-800 mt-3 flex flex-wrap items-center justify-between gap-2">
+        <div class="flex items-center gap-1.5">
+          <button onclick="saveManual()" class="bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 text-[11px] px-2.5 py-1.5 rounded font-medium">
+            Subir a Firebase
           </button>
-          <button onclick="downloadServerJson()" class="bg-emerald-950/60 hover:bg-emerald-900/60 border border-emerald-700/50 text-emerald-300 px-2.5 py-1.5 rounded-lg text-[11px] font-medium flex items-center justify-center gap-1.5 transition">
-            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-            <span>Descargar setlists.json</span>
+          <button onclick="downloadMasterJson()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-[11px] px-2.5 py-1.5 rounded">
+            Backup JSON
           </button>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-          <button onclick="syncFromStaticServerJson(false)" class="bg-slate-950/80 hover:bg-slate-800 border border-slate-800 text-teal-300 px-2.5 py-1.5 rounded-lg text-[11px] flex items-center justify-center gap-1.5 transition">
-            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path></svg>
-            <span>Cargar ./setlists.json</span>
-          </button>
-          <button onclick="triggerJsonBackupImport()" class="bg-slate-950/80 hover:bg-slate-800 border border-slate-800 text-slate-300 px-2.5 py-1.5 rounded-lg text-[11px] flex items-center justify-center gap-1.5 transition">
-            <svg class="w-3.5 h-3.5 text-purple-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-            <span>Importar backup .json</span>
-          </button>
-        </div>
-      </div>
-      
-      <div class="pt-3 border-t border-slate-800 mt-3 flex justify-end">
-        <button onclick="closeSetlistsModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs px-3 py-1.5 rounded-lg">Cerrar</button>
+        <button onclick="closeSetlistsModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs px-3 py-1.5 rounded">Cerrar</button>
       </div>
     </div>
   </div>
@@ -296,59 +282,214 @@
       <div class="space-y-3 text-xs">
         <div>
           <label class="block text-slate-400 mb-1">Título</label>
-          <input type="text" id="editTitleInput" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white focus:ring-1 focus:ring-emerald-500 focus:outline-none">
+          <input type="text" id="editTitleInput" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white focus:ring-1 focus:ring-emerald-500 focus:outline-none">
         </div>
         <div>
           <label class="block text-slate-400 mb-1">Artista / Referencia</label>
-          <input type="text" id="editArtistInput" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white focus:ring-1 focus:ring-emerald-500 focus:outline-none">
+          <input type="text" id="editArtistInput" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white focus:ring-1 focus:ring-emerald-500 focus:outline-none">
         </div>
         <div>
-          <label class="block text-slate-400 mb-1">Duración (MM:SS o segundos)</label>
-          <input type="text" id="editDurationInput" placeholder="Ej: 03:45 o 225" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white font-mono focus:ring-1 focus:ring-emerald-500 focus:outline-none" onkeydown="if(event.key==='Enter') saveEditModal()">
+          <label class="block text-slate-400 mb-1">Duración (MM:SS o SSS)</label>
+          <input type="text" id="editDurationInput" placeholder="Ej: 03:45 o 225" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white font-mono focus:ring-1 focus:ring-emerald-500 focus:outline-none">
         </div>
       </div>
 
       <div class="mt-4 flex justify-end gap-2 text-xs">
-        <button onclick="closeEditModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg">Cancelar</button>
-        <button onclick="saveEditModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg font-medium">Aceptar</button>
+        <button onclick="closeEditModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded">Cancelar</button>
+        <button onclick="saveEditModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded font-medium">Aceptar</button>
       </div>
     </div>
   </div>
 
-  <!-- MODAL DE CONFIRMACIÓN PERSONALIZADO (Sustituye confirm() nativo) -->
-  <div id="confirmModal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-3">
-    <div class="bg-slate-900 border border-slate-700 w-full max-w-sm rounded-xl shadow-2xl p-4">
-      <h3 id="confirmModalTitle" class="font-bold text-sm text-slate-100 mb-1.5">Confirmar acción</h3>
-      <p id="confirmModalMessage" class="text-xs text-slate-300 leading-relaxed mb-4"></p>
-      <div class="flex justify-end gap-2 text-xs">
-        <button id="confirmCancelBtn" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg">Cancelar</button>
-        <button id="confirmAcceptBtn" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg font-medium">Continuar</button>
-      </div>
-    </div>
-  </div>
+  <!-- NOTIFICACIÓN TOAST -->
+  <div id="toastBanner" class="hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-slate-900 border border-emerald-500/40 text-emerald-300 text-xs font-medium px-3.5 py-2 rounded-lg shadow-xl max-w-[90vw] text-center"></div>
 
-  <!-- TOAST / MENSAJE FLOTANTE DE NOTIFICACIÓN -->
-  <div id="toastNotification" class="hidden fixed bottom-4 right-4 z-50 max-w-xs bg-slate-900 border border-slate-700 text-slate-100 text-xs px-3.5 py-2.5 rounded-xl shadow-2xl flex items-center gap-2 transition-all no-print">
-    <span id="toastIcon" class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
-    <span id="toastMessage" class="leading-snug"></span>
-  </div>
-
-  <!-- LOGOS VECTORIALES Y LÓGICA -->
+  <!-- JAVASCRIPT & LOGOS SVG EMBEBIDOS -->
   <script>
-    // =========================================================================
-    // CONFIGURACIÓN DE FIREBASE REALTIME DATABASE PARA TODA LA BANDA
-    // Normalizada sin barra final para construir `${url}/setlists.json`
-    // =========================================================================
+    // URL DE TU FIREBASE REALTIME DATABASE
     const FIREBASE_DEFAULT_URL = "https://setlist-manager-37c8f-default-rtdb.europe-west1.firebasedatabase.app";
+    const FIREBASE_CONFIG_STORAGE_KEY = "BAND_SETLIST_FIREBASE_URL_V1";
 
-    // LOGO 1: APRIL CREW (Vector fiel sin modificar)
-    const LOGO_APRIL_CREW_SVG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 500'><circle cx='250' cy='250' r='244' fill='%23ffffff' stroke='%23111111' stroke-width='2'/><g fill='none' stroke='%23111111' stroke-linecap='round'><path d='M 248,255 C 248,318 195,372 132,372 C 66,372 16,320 16,252 C 16,182 68,128 136,128 C 204,128 258,180 258,248' stroke-width='5.5'/><path d='M 254,250 C 254,316 202,368 136,368 C 72,368 22,316 22,250 C 22,184 72,134 136,134 C 200,134 254,184 254,250' stroke-width='3.5'/><path d='M 34,195 C 58,148 104,125 156,130' stroke-width='3'/><path d='M 18,262 C 25,326 76,376 144,375 C 185,374 225,342 268,324 C 318,303 385,303 458,305' stroke-width='6'/><path d='M 136,372 C 182,372 222,340 264,322 C 314,301 382,301 456,304' stroke-width='4'/></g><g fill='%23111111'><path d='M 118,370 L 118,318' stroke='%23111111' stroke-width='2.6' stroke-linecap='round'/><path d='M 118,325 C 106,322 98,312 97,298 C 106,301 114,309 118,321 Z'/><path d='M 118,325 C 130,322 138,312 139,298 C 130,301 122,309 118,321 Z'/><path d='M 118,311 C 107,307 100,297 100,283 C 109,287 115,295 118,307 Z'/><path d='M 118,311 C 129,307 136,297 136,283 C 127,287 121,295 118,307 Z'/><path d='M 118,297 C 108,292 103,283 104,270 C 112,275 116,283 118,293 Z'/><path d='M 118,297 C 128,292 133,283 132,270 C 124,275 120,283 118,293 Z'/><path d='M 118,284 C 110,278 107,270 109,260 C 115,265 117,272 118,280 Z'/><path d='M 118,284 C 126,278 129,270 127,260 C 121,265 119,272 118,280 Z'/><path d='M 118,272 C 114,264 115,256 118,250 C 121,256 122,264 118,272 Z'/><g stroke='%23111111' stroke-width='0.9' stroke-linecap='round'><line x1='99' y1='299' x2='97' y2='293'/><line x1='102' y1='301' x2='100' y2='295'/><line x1='137' y1='299' x2='139' y2='293'/><line x1='134' y1='301' x2='136' y2='295'/><line x1='102' y1='284' x2='100' y2='278'/><line x1='105' y1='286' x2='103' y2='280'/><line x1='134' y1='284' x2='136' y2='278'/><line x1='131' y1='286' x2='133' y2='280'/><line x1='106' y1='271' x2='104' y2='265'/><line x1='130' y1='271' x2='132' y2='265'/></g></g><text x='136' y='256' text-anchor='middle' font-family='Times New Roman, Georgia, serif' font-weight='400' font-size='56' fill='%23111111' letter-spacing='1'>APRIL</text><text x='362' y='293' text-anchor='middle' font-family='Times New Roman, Georgia, serif' font-weight='400' font-size='64' fill='%23111111' letter-spacing='2'>CREW</text></svg>";
+    // REGISTRO DE SERVICE WORKER E INSTALACIÓN PWA ANDROID
+    let deferredInstallPrompt = null;
 
-    // LOGO 2: LOCAL 13 (Vector fiel sin modificar)
-    const LOGO_LOCAL_13_SVG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 500'><rect width='500' height='500' fill='%23ffffff'/><circle cx='105' cy='102' r='15' fill='none' stroke='%231a1a1a' stroke-width='7'/><path d='M390,38 C368,68 352,85 352,102 C352,115 363,125 376,125 C383,125 388,120 390,116 C392,120 397,125 404,125 C417,125 428,115 428,102 C428,85 412,68 390,38 Z' fill='%231a1a1a'/><path d='M387,114 L381,134 L399,134 L393,114 Z' fill='%231a1a1a'/><line x1='364' y1='135' x2='416' y2='135' stroke='%231a1a1a' stroke-width='4' stroke-linecap='round'/><path d='M212,60 A 118 118 0 0 0 132 175 A 118 118 0 0 0 368 175 A 118 118 0 0 0 288 60' fill='none' stroke='%231a1a1a' stroke-width='7' stroke-linecap='round'/><g fill='%231a1a1a'><rect x='74' y='136' width='48' height='7'/><rect x='138' y='136' width='48' height='7'/><rect x='74' y='170' width='46' height='7'/><rect x='136' y='170' width='36' height='7'/><rect x='74' y='204' width='52' height='7'/><rect x='142' y='204' width='22' height='7'/><rect x='314' y='136' width='48' height='7'/><rect x='378' y='136' width='48' height='7'/><rect x='328' y='170' width='36' height='7'/><rect x='380' y='170' width='46' height='7'/><rect x='336' y='204' width='22' height='7'/><rect x='374' y='204' width='52' height='7'/></g><path d='M237,40 L237,82 C215,87 202,102 202,122 C202,138 212,148 212,155 C212,163 182,182 182,216 C182,252 212,272 250,272 C288,272 318,252 318,216 C318,182 288,163 288,155 C288,148 298,138 298,122 C298,102 285,87 263,82 L263,40 Z' fill='%231a1a1a'/><path d='M240,94 C224,98 215,109 215,123 C215,137 226,146 226,156 C226,166 196,182 196,215 C196,243 220,259 250,259 C280,259 304,243 304,215 C304,182 274,166 274,156 C274,146 285,137 285,123 C285,109 276,98 260,94 Z' fill='%23ffffff'/><g stroke='%23ffffff' stroke-width='1.5'><line x1='242.5' y1='40' x2='242.5' y2='95'/><line x1='245.5' y1='40' x2='245.5' y2='95'/><line x1='248.5' y1='40' x2='248.5' y2='95'/><line x1='251.5' y1='40' x2='251.5' y2='95'/><line x1='254.5' y1='40' x2='254.5' y2='95'/><line x1='257.5' y1='40' x2='257.5' y2='95'/></g><circle cx='250' cy='144' r='22' fill='none' stroke='%231a1a1a' stroke-width='2.5'/><circle cx='250' cy='144' r='18.5' fill='%231a1a1a'/><g stroke='%23ffffff' stroke-width='1.3'><line x1='242.5' y1='125' x2='242.5' y2='163'/><line x1='245.5' y1='125' x2='245.5' y2='163'/><line x1='248.5' y1='125' x2='248.5' y2='163'/><line x1='251.5' y1='125' x2='251.5' y2='163'/><line x1='254.5' y1='125' x2='254.5' y2='163'/><line x1='257.5' y1='125' x2='257.5' y2='163'/></g><rect x='224' y='204' width='52' height='15' fill='none' stroke='%231a1a1a' stroke-width='2.2'/><rect x='229' y='207' width='42' height='4' fill='%231a1a1a'/><line x1='232' y1='215' x2='268' y2='215' stroke='%231a1a1a' stroke-width='2' stroke-dasharray='3,2'/><g fill='%231a1a1a'><path d='M74,276 L112,262 L112,428 L190,428 L190,462 L74,462 Z'/><path d='M124,316 L180,302 L180,418 L124,398 Z M142,331 L142,384 L162,392 L162,324 Z'/><path d='M193,328 L254,302 L254,328 L219,344 L219,382 L254,396 L254,422 L193,396 Z'/><path d='M240,418 L280,302 L305,302 L345,402 L286,396 L292,374 L310,376 L292,332 L268,408 Z'/><path d='M316,302 L338,302 L338,382 L396,406 L284,412 L316,302 Z'/><path d='M356,274 L369,268 L369,362 L356,370 Z'/><path d='M375,268 L424,268 L424,338 L375,362 L375,342 L408,326 L408,312 L386,312 L386,296 L408,296 L408,284 L375,284 Z'/></g></svg>";
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch((err) => {
+          console.warn('Error registrando Service Worker:', err);
+        });
+      });
+    }
 
-    // LOGO 3: UNDERGROUND ESCAPE (Vector fiel sin modificar)
-    const LOGO_UNDERGROUND_ESCAPE_SVG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 500'><defs><radialGradient id='bgVig' cx='50%25' cy='48%25' r='55%25'><stop offset='0%25' stop-color='%230c180a'/><stop offset='70%25' stop-color='%23070907'/><stop offset='100%25' stop-color='%23040504'/></radialGradient><filter id='neonGlow' x='-25%25' y='-25%25' width='150%25' height='150%25'><feGaussianBlur stdDeviation='6' result='blur1'/><feGaussianBlur stdDeviation='14' result='blur2'/><feMerge><feMergeNode in='blur2'/><feMergeNode in='blur1'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><rect width='500' height='500' fill='url(%23bgVig)'/><g filter='url(%23neonGlow)'><rect x='92' y='130' width='316' height='195' rx='10' fill='%23050a05' fill-opacity='0.65' stroke='%2376e85b' stroke-width='8'/><g fill='%2376e85b'><circle cx='232' cy='168' r='15'/><path d='M 183,195 C 188,186 202,182 218,182 C 232,182 240,188 246,201 L 256,220 C 258,223 255,227 251,228 L 236,229 L 228,214 L 221,232 L 248,295 C 251,301 248,308 242,310 C 236,312 230,309 227,303 L 204,251 L 183,281 C 180,285 175,288 170,288 L 132,288 C 126,288 122,284 122,279 C 122,273 126,269 132,269 L 164,269 L 188,234 L 193,210 L 179,224 L 171,240 C 168,245 162,247 157,244 C 152,241 151,235 154,230 L 166,209 C 169,203 176,198 183,195 Z'/><path d='M 171,254 L 168,243 L 173,241 L 176,253 Z'/><path d='M 176,264 C 175,259 179,252 183,246 C 186,242 184,237 183,234 C 182,231 185,229 188,231 C 192,235 194,239 199,237 C 204,235 208,228 214,226 C 219,224 223,227 221,231 C 219,235 215,237 217,240 L 260,228 L 262,223 C 264,220 268,219 272,219 L 283,219 C 286,219 288,222 287,225 C 285,228 281,229 277,229 L 273,233 C 270,235 266,236 263,234 L 220,247 C 219,250 223,252 225,255 C 226,259 221,262 216,261 C 211,260 207,257 202,258 C 196,260 192,267 185,270 C 179,272 177,269 176,264 Z'/><circle cx='265' cy='218' r='1.7'/><circle cx='269' cy='218' r='1.7'/><circle cx='273' cy='218' r='1.7'/><circle cx='277' cy='218' r='1.7'/><circle cx='281' cy='218' r='1.7'/><circle cx='285' cy='218' r='1.7'/><polygon points='292,212 332,212 312,180 340,180 385,227 340,274 312,274 332,242 292,242'/></g><text x='250' y='358' text-anchor='middle' font-family='system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif' font-size='23.5' font-weight='700' fill='%2376e85b' letter-spacing='1.2'>UNDERGROUND ESCAPE</text></g></svg>";
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredInstallPrompt = e;
+      const btn = document.getElementById('installPwaBtn');
+      if (btn) btn.classList.remove('hidden');
+    });
+
+    window.addEventListener('appinstalled', () => {
+      deferredInstallPrompt = null;
+      const btn = document.getElementById('installPwaBtn');
+      if (btn) btn.classList.add('hidden');
+      showToast('App instalada correctamente en el dispositivo.');
+    });
+
+    async function installPwa() {
+      if (!deferredInstallPrompt) return;
+      deferredInstallPrompt.prompt();
+      const { outcome } = await deferredInstallPrompt.userChoice;
+      if (outcome === 'accepted') {
+        deferredInstallPrompt = null;
+        document.getElementById('installPwaBtn').classList.add('hidden');
+      }
+    }
+
+    // LOGOS VECTORIALES DE LAS BANDAS
+    const LOGO_APRIL_CREW_SVG = "data:image/svg+xml;utf8," + encodeURIComponent(`
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+        <circle cx="500" cy="500" r="485" fill="#ffffff" stroke="#111111" stroke-width="5"/>
+        <path d="M 43 495 C 40 345, 160 250, 305 253 C 448 256, 526 355, 522 485 C 519 520, 513 546, 502 566 C 512 544, 516 516, 515 485 C 512 365, 434 277, 302 275 C 166 273, 52 364, 43 495 Z" fill="#111111"/>
+        <path d="M 65 450 C 98 335, 200 266, 315 268 C 415 270, 480 322, 505 395 C 475 332, 408 286, 312 284 C 202 282, 105 344, 65 450 Z" fill="#111111"/>
+        <path d="M 45 530 C 66 668, 175 762, 312 758 C 385 755, 445 724, 510 688 C 595 642, 710 622, 918 625 C 924 625, 924 636, 916 636 C 712 636, 600 656, 516 702 C 448 740, 386 774, 310 776 C 168 779, 58 678, 45 530 Z" fill="#111111"/>
+        <path d="M 105 642 C 155 725, 232 766, 318 764 C 382 762, 435 734, 485 706 C 432 742, 378 772, 314 774 C 225 776, 148 730, 105 642 Z" fill="#111111"/>
+        <text x="86" y="516" font-family="Georgia, 'Times New Roman', serif" font-size="112" fill="#111111" letter-spacing="3">APRIL</text>
+        <text x="515" y="592" font-family="Georgia, 'Times New Roman', serif" font-size="112" fill="#111111" letter-spacing="3">CREW</text>
+        <g fill="#111111">
+          <path d="M 244 766 C 245 712, 245 640, 244 585 L 251 585 C 252 640, 252 712, 251 766 Z"/>
+          <path d="M 245 698 C 216 680, 198 650, 200 618 C 218 632, 236 658, 246 688 Z"/>
+          <path d="M 205 622 L 201 612 M 211 628 L 207 617 M 217 635 L 214 624"/>
+          <path d="M 250 692 C 278 674, 297 644, 295 612 C 276 626, 258 652, 249 682 Z"/>
+          <path d="M 290 616 L 294 606 M 284 622 L 288 611 M 278 629 L 281 618"/>
+          <path d="M 245 654 C 218 636, 204 608, 206 578 C 224 592, 238 616, 246 644 Z"/>
+          <path d="M 211 582 L 207 572 M 217 588 L 213 577 M 223 595 L 220 584"/>
+          <path d="M 250 648 C 276 630, 291 602, 289 572 C 271 586, 257 610, 249 638 Z"/>
+          <path d="M 284 576 L 288 566 M 278 582 L 282 571 M 272 589 L 275 578"/>
+          <path d="M 245 612 C 222 595, 210 570, 212 544 C 228 557, 240 578, 246 602 Z"/>
+          <path d="M 216 547 L 213 538 M 222 553 L 219 543"/>
+          <path d="M 250 606 C 273 589, 285 564, 283 538 C 267 551, 255 572, 249 596 Z"/>
+          <path d="M 279 541 L 282 532 M 273 547 L 276 537"/>
+          <path d="M 245 574 C 226 558, 218 536, 222 514 C 235 526, 243 544, 247 564 Z"/>
+          <path d="M 249 568 C 268 552, 276 530, 272 508 C 259 520, 251 538, 248 558 Z"/>
+          <path d="M 247 554 C 236 534, 236 510, 247 492 C 258 510, 258 534, 247 554 Z"/>
+          <path d="M 247 494 L 247 480 M 242 502 L 238 490 M 252 502 L 256 490"/>
+        </g>
+      </svg>
+    `);
+
+    const LOGO_LOCAL_13_SVG = "data:image/svg+xml;utf8," + encodeURIComponent(`
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+        <rect width="1000" height="1000" fill="#ffffff"/>
+        <circle cx="212" cy="202" r="34" fill="none" stroke="#1c1c1c" stroke-width="16"/>
+        <g fill="#1c1c1c">
+          <path d="M 785 52 C 755 95, 715 125, 715 162 C 715 190, 738 208, 764 208 C 773 208, 779 204, 782 199 C 779 216, 768 228, 742 234 L 828 234 C 802 228, 791 216, 788 199 C 791 204, 797 208, 806 208 C 832 208, 855 190, 855 162 C 855 125, 815 95, 785 52 Z"/>
+        </g>
+        <g fill="#1c1c1c">
+          <rect x="142" y="260" width="242" height="16"/>
+          <rect x="142" y="330" width="212" height="16"/>
+          <rect x="142" y="400" width="202" height="16"/>
+          <rect x="616" y="260" width="242" height="16"/>
+          <rect x="646" y="330" width="212" height="16"/>
+          <rect x="656" y="400" width="202" height="16"/>
+        </g>
+        <path d="M 442 104 A 244 244 0 0 0 282 248" fill="none" stroke="#1c1c1c" stroke-width="14" stroke-linecap="butt"/>
+        <path d="M 558 104 A 244 244 0 0 1 718 248" fill="none" stroke="#1c1c1c" stroke-width="14" stroke-linecap="butt"/>
+        <path d="M 262 288 A 244 244 0 0 0 256 318" fill="none" stroke="#1c1c1c" stroke-width="14"/>
+        <path d="M 738 288 A 244 244 0 0 1 744 318" fill="none" stroke="#1c1c1c" stroke-width="14"/>
+        <path d="M 256 358 A 244 244 0 0 0 264 388" fill="none" stroke="#1c1c1c" stroke-width="14"/>
+        <path d="M 744 358 A 244 244 0 0 1 736 388" fill="none" stroke="#1c1c1c" stroke-width="14"/>
+        <path d="M 278 428 A 244 244 0 0 0 722 428" fill="none" stroke="#1c1c1c" stroke-width="14"/>
+        <g fill="#1c1c1c">
+          <rect x="477" y="64" width="46" height="96"/>
+          <rect x="484" y="64" width="2" height="175" fill="#ffffff"/>
+          <rect x="492" y="64" width="2" height="175" fill="#ffffff"/>
+          <rect x="500" y="64" width="2" height="175" fill="#ffffff"/>
+          <rect x="508" y="64" width="2" height="175" fill="#ffffff"/>
+          <rect x="515" y="64" width="2" height="175" fill="#ffffff"/>
+          <path fill-rule="evenodd" d="
+            M 477 156
+            C 418 160, 384 190, 386 244
+            C 387 272, 396 294, 396 312
+            C 396 330, 380 348, 362 372
+            C 340 402, 336 446, 356 482
+            C 382 528, 438 544, 500 544
+            C 562 544, 618 528, 644 482
+            C 664 446, 660 402, 638 372
+            C 620 348, 604 330, 604 312
+            C 604 294, 613 272, 614 244
+            C 616 190, 582 160, 523 156
+            L 523 182
+            C 566 186, 588 208, 586 246
+            C 585 270, 577 290, 577 312
+            C 577 336, 594 358, 612 384
+            C 628 408, 631 440, 616 468
+            C 596 502, 550 516, 500 516
+            C 450 516, 404 502, 384 468
+            C 369 440, 372 408, 388 384
+            C 406 358, 423 336, 423 312
+            C 423 290, 415 270, 414 246
+            C 412 208, 434 186, 477 182
+            Z"/>
+          <circle cx="500" cy="278" r="56" fill="none" stroke="#1c1c1c" stroke-width="11"/>
+          <circle cx="500" cy="278" r="44" fill="none" stroke="#1c1c1c" stroke-width="3"/>
+          <circle cx="500" cy="278" r="36" fill="#1c1c1c"/>
+          <rect x="484" y="220" width="2" height="195" fill="#ffffff"/>
+          <rect x="492" y="220" width="2" height="195" fill="#ffffff"/>
+          <rect x="500" y="220" width="2" height="195" fill="#ffffff"/>
+          <rect x="508" y="220" width="2" height="195" fill="#ffffff"/>
+          <rect x="515" y="220" width="2" height="195" fill="#ffffff"/>
+          <rect x="442" y="418" width="116" height="32" fill="none" stroke="#1c1c1c" stroke-width="5"/>
+          <rect x="462" y="423" width="76" height="9" fill="#1c1c1c"/>
+          <line x1="452" y1="441" x2="548" y2="441" stroke="#1c1c1c" stroke-width="3"/>
+          <circle cx="452" cy="441" r="4" fill="#1c1c1c"/>
+          <circle cx="548" cy="441" r="4" fill="#1c1c1c"/>
+        </g>
+        <g fill="#1c1c1c">
+          <polygon points="142,608 206,584 206,866 376,866 376,928 142,928"/>
+          <path fill-rule="evenodd" d="M 250,656 L 366,690 L 366,856 L 250,814 Z M 280,694 L 280,792 L 336,812 L 336,710 Z"/>
+          <polygon points="396,684 522,638 522,676 430,708 430,794 516,794 504,824 396,824"/>
+          <path fill-rule="evenodd" d="M 482,862 L 584,616 L 620,602 L 664,798 L 732,798 L 718,824 L 634,824 L 624,778 L 548,778 L 518,848 Z M 598,668 L 560,752 L 618,752 Z"/>
+          <polygon points="694,598 730,584 730,774 824,774 812,798 694,798"/>
+          <polygon points="712,584 738,574 738,732 712,742"/>
+          <polygon points="748,570 832,542 832,724 748,762 748,732 806,706 806,652 758,668 758,642 806,626 806,578 748,598"/>
+        </g>
+      </svg>
+    `);
+
+    const LOGO_UNDERGROUND_ESCAPE_SVG = "data:image/svg+xml;utf8," + encodeURIComponent(`
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+        <defs>
+          <radialGradient id="ueBg" cx="50%" cy="46%" r="58%">
+            <stop offset="0%" stop-color="#0b1a09"/>
+            <stop offset="65%" stop-color="#060c05"/>
+            <stop offset="100%" stop-color="#020302"/>
+          </radialGradient>
+          <filter id="ueGlow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="10" result="blur"/>
+            <feMerge>
+              <feMergeNode in="blur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+        <rect width="1000" height="1000" fill="url(#ueBg)"/>
+        <g filter="url(#ueGlow)">
+          <rect x="190" y="256" width="620" height="404" rx="18" fill="none" stroke="#76e85b" stroke-width="18"/>
+          <circle cx="472" cy="336" r="28" fill="#76e85b"/>
+          <path d="M 412 374 L 468 374 C 482 374, 492 384, 498 398 L 516 440 L 552 440 C 562 440, 568 446, 568 454 C 568 462, 562 468, 552 468 L 500 468 C 492 468, 486 462, 482 454 L 468 424 L 456 476 L 518 544 L 542 612 C 546 624, 540 634, 528 638 C 516 642, 506 636, 502 624 L 480 562 L 424 504 L 392 568 C 386 580, 376 586, 362 586 L 266 586 C 254 586, 246 578, 246 566 C 246 554, 254 546, 266 546 L 350 546 L 386 472 L 402 414 L 372 426 L 356 466 C 352 476, 342 480, 332 476 C 322 472, 318 462, 322 452 L 344 402 C 348 392, 356 386, 368 382 Z" fill="#76e85b"/>
+          <path d="M 358 492 C 368 474, 392 464, 412 468 C 424 470, 432 478, 444 476 C 454 474, 462 464, 472 464 C 480 464, 484 472, 480 480 L 552 452 L 556 462 L 482 492 C 484 502, 478 510, 468 510 C 458 510, 452 502, 442 504 C 430 506, 424 522, 412 528 C 396 536, 374 534, 356 544 C 348 548, 342 542, 346 532 C 352 518, 352 504, 358 492 Z" fill="#76e85b" stroke="#081207" stroke-width="5" stroke-linejoin="round"/>
+          <polygon points="342,498 352,494 362,520 352,524" fill="#76e85b"/>
+          <path d="M 550 450 L 584 442 L 588 456 L 554 464 Z" fill="#76e85b"/>
+          <circle cx="556" cy="442" r="3" fill="#76e85b"/>
+          <circle cx="563" cy="440" r="3" fill="#76e85b"/>
+          <circle cx="570" cy="438" r="3" fill="#76e85b"/>
+          <circle cx="577" cy="436" r="3" fill="#76e85b"/>
+          <circle cx="584" cy="434" r="3" fill="#76e85b"/>
+          <polygon points="582,424 670,424 634,376 692,376 764,462 692,548 634,548 670,500 582,500" fill="#76e85b"/>
+          <text x="500" y="732" text-anchor="middle" font-family="'Trebuchet MS', 'Arial Narrow', Arial, sans-serif" font-weight="700" font-size="54" fill="#76e85b" letter-spacing="2">UNDERGROUND ESCAPE</text>
+        </g>
+      </svg>
+    `);
 
     const BAND_DATA = {
       april_crew: {
@@ -399,143 +540,64 @@
       }
     };
 
-    // ESTADO DE LA APLICACIÓN
-    const LOCAL_DATA_KEY = 'BAND_SETLIST_DATA_V2';
-    const FIREBASE_URL_STORAGE_KEY = 'BAND_SETLIST_FIREBASE_URL_V1';
-
+    // ESTADO DE LA APLICACIÓN E HISTORIAL DESHACER
     let currentBandKey = "april_crew";
     let appData = null;
     let isModified = false;
     let undoStack = [];
-    const MAX_UNDO_HISTORY = 30;
-    let toastTimeout = null;
-    let editingSetlistId = null;
-    let isSavingToFirebase = false;
+    const MAX_UNDO_STEPS = 30;
+    let renamingSetlistId = null;
 
-    // INICIALIZACIÓN
-    window.addEventListener('DOMContentLoaded', async () => {
-      const hadLocalData = loadInitialData();
-      renderBandVisuals();
-      populateSetlistDropdown();
-      renderTrackList();
-      updateMetrics();
-      setModifiedStatus(false);
-      updateUndoButtonUI();
-      updateFirebaseMenuIndicator();
-
-      // Sincronización automática al cargar: Firebase primero, y si no hay Firebase ni datos locales, ./setlists.json
-      const fbUrl = getActiveFirebaseUrl();
-      if (fbUrl) {
-        await syncFromFirebase(true);
-      } else if (!hadLocalData) {
-        await syncFromStaticServerJson(true);
-      }
-
-      // Cierre de dropdown al hacer clic fuera
-      document.addEventListener('click', (e) => {
-        const menu = document.getElementById('actionMenu');
-        const btn = document.getElementById('menuToggleBtn');
-        if (menu && btn && !menu.contains(e.target) && !btn.contains(e.target)) {
-          hideDropdownMenu();
-        }
-      });
-
-      // Atajo de teclado Ctrl+Z / Cmd+Z para Deshacer
-      document.addEventListener('keydown', (e) => {
-        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !e.shiftKey) {
-          const activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
-          if (activeTag !== 'input' && activeTag !== 'textarea') {
-            e.preventDefault();
-            undoLastAction();
+    function getDefaultAppData() {
+      return {
+        activeBand: "april_crew",
+        bands: {
+          april_crew: {
+            activeSetlistId: "repertorio_principal",
+            setlists: {
+              repertorio_principal: {
+                name: "Repertorio Completo (21 temas)",
+                tracks: JSON.parse(JSON.stringify(BAND_DATA.april_crew.defaultSetlist))
+              }
+            }
+          },
+          local_13: {
+            activeSetlistId: "repertorio_local13",
+            setlists: {
+              repertorio_local13: {
+                name: "Lista Directo",
+                tracks: JSON.parse(JSON.stringify(BAND_DATA.local_13.defaultSetlist))
+              }
+            }
+          },
+          underground_escape: {
+            activeSetlistId: "repertorio_ue",
+            setlists: {
+              repertorio_ue: {
+                name: "Setlist Escape",
+                tracks: JSON.parse(JSON.stringify(BAND_DATA.underground_escape.defaultSetlist))
+              }
+            }
           }
         }
-      });
-    });
-
-    function showToast(message, type = 'success') {
-      const toast = document.getElementById('toastNotification');
-      const msgEl = document.getElementById('toastMessage');
-      const iconEl = document.getElementById('toastIcon');
-      if (!toast || !msgEl || !iconEl) return;
-
-      msgEl.textContent = message;
-      if (type === 'error') {
-        iconEl.className = 'w-2 h-2 rounded-full bg-rose-400 shrink-0';
-      } else if (type === 'warning') {
-        iconEl.className = 'w-2 h-2 rounded-full bg-amber-400 shrink-0';
-      } else {
-        iconEl.className = 'w-2 h-2 rounded-full bg-emerald-400 shrink-0';
-      }
-
-      toast.classList.remove('hidden');
-      if (toastTimeout) clearTimeout(toastTimeout);
-      toastTimeout = setTimeout(() => {
-        toast.classList.add('hidden');
-      }, 3600);
+      };
     }
 
-    function openConfirmDialog(title, message) {
-      return new Promise((resolve) => {
-        const modal = document.getElementById('confirmModal');
-        document.getElementById('confirmModalTitle').textContent = title;
-        document.getElementById('confirmModalMessage').textContent = message;
-        modal.classList.remove('hidden');
-
-        const acceptBtn = document.getElementById('confirmAcceptBtn');
-        const cancelBtn = document.getElementById('confirmCancelBtn');
-
-        const cleanup = (result) => {
-          modal.classList.add('hidden');
-          acceptBtn.onclick = null;
-          cancelBtn.onclick = null;
-          resolve(result);
-        };
-
-        acceptBtn.onclick = () => cleanup(true);
-        cancelBtn.onclick = () => cleanup(false);
-      });
+    function isValidAppData(data) {
+      return data && typeof data === 'object' && data.bands && typeof data.bands === 'object';
     }
 
-    // GESTIÓN DE URL DE FIREBASE REALTIME DATABASE
-    function normalizeFirebaseBaseUrl(rawUrl) {
-      if (!rawUrl) return "";
-      let clean = rawUrl.trim();
-      if (!clean) return "";
-      clean = clean.replace(/\/setlists\.json\/?$/i, '');
-      clean = clean.replace(/\/+$/, '');
-      return clean;
-    }
-
-    function getActiveFirebaseUrl() {
-      const stored = normalizeFirebaseBaseUrl(localStorage.getItem(FIREBASE_URL_STORAGE_KEY));
-      if (stored) return stored;
-      return normalizeFirebaseBaseUrl(FIREBASE_DEFAULT_URL);
-    }
-
-    function updateFirebaseMenuIndicator() {
-      const url = getActiveFirebaseUrl();
-      const dot = document.getElementById('fbMenuStatusDot');
-      const label = document.getElementById('fbMenuUrlLabel');
-      if (!dot || !label) return;
-
-      if (url) {
-        dot.className = "w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_#34d399]";
-        const hostOnly = url.replace(/^https?:\/\//i, '');
-        label.textContent = hostOnly;
-        label.className = "block text-[10px] text-emerald-400/90 truncate max-w-[180px]";
-      } else {
-        dot.className = "w-2 h-2 rounded-full bg-slate-600";
-        label.textContent = "No configurado";
-        label.className = "block text-[10px] text-slate-400";
-      }
+    // GESTIÓN DE CONFIGURACIÓN FIREBASE
+    function getFirebaseBaseUrl() {
+      const saved = (localStorage.getItem(FIREBASE_CONFIG_STORAGE_KEY) || "").trim();
+      const raw = saved || FIREBASE_DEFAULT_URL;
+      return raw.replace(/\/+$/, "");
     }
 
     function openFirebaseModal() {
       hideDropdownMenu();
-      const currentUrl = getActiveFirebaseUrl();
-      document.getElementById('fbUrlInput').value = currentUrl;
-      const fb = document.getElementById('fbModalFeedback');
-      fb.classList.add('hidden');
+      document.getElementById('fbUrlInput').value = getFirebaseBaseUrl();
+      document.getElementById('fbStatusMsg').classList.add('hidden');
       document.getElementById('firebaseModal').classList.remove('hidden');
     }
 
@@ -543,428 +605,261 @@
       document.getElementById('firebaseModal').classList.add('hidden');
     }
 
-    function resetToDefaultFirebaseUrl() {
-      localStorage.removeItem(FIREBASE_URL_STORAGE_KEY);
-      const defUrl = normalizeFirebaseBaseUrl(FIREBASE_DEFAULT_URL);
-      document.getElementById('fbUrlInput').value = defUrl;
-      updateFirebaseMenuIndicator();
-      const fb = document.getElementById('fbModalFeedback');
-      fb.textContent = "URL por defecto restaurada (" + defUrl + ").";
-      fb.className = "text-[11px] rounded-lg p-2 border border-emerald-500/40 bg-emerald-500/10 text-emerald-300";
-      fb.classList.remove('hidden');
+    function resetFirebaseUrl() {
+      localStorage.removeItem(FIREBASE_CONFIG_STORAGE_KEY);
+      document.getElementById('fbUrlInput').value = FIREBASE_DEFAULT_URL;
+      showToast("URL de Firebase restaurada al valor por defecto.");
     }
 
-    async function saveAndTestFirebaseConfig() {
-      const rawInput = document.getElementById('fbUrlInput').value;
-      const baseUrl = normalizeFirebaseBaseUrl(rawInput);
-      const fb = document.getElementById('fbModalFeedback');
-      const btn = document.getElementById('fbSaveTestBtn');
+    async function saveFirebaseConfig() {
+      const urlVal = document.getElementById('fbUrlInput').value.trim().replace(/\/+$/, "");
+      const statusEl = document.getElementById('fbStatusMsg');
+      statusEl.classList.remove('hidden');
 
-      if (!baseUrl || !/^https:\/\/.+\.firebaseio\.com$|^https:\/\/.+\.firebasedatabase\.app$/i.test(baseUrl)) {
-        fb.textContent = "Introduce una URL válida de Firebase Realtime Database (ej: https://setlist-manager-37c8f-default-rtdb.europe-west1.firebasedatabase.app).";
-        fb.className = "text-[11px] rounded-lg p-2 border border-rose-500/40 bg-rose-500/10 text-rose-300";
-        fb.classList.remove('hidden');
+      if (!urlVal || !urlVal.startsWith("http")) {
+        statusEl.className = "text-[11px] text-rose-400";
+        statusEl.textContent = "Introduce una URL válida de Firebase (https://...).";
         return;
       }
 
-      btn.disabled = true;
-      btn.innerHTML = `<span>Probando...</span>`;
+      localStorage.setItem(FIREBASE_CONFIG_STORAGE_KEY, urlVal);
+      statusEl.className = "text-[11px] text-amber-400";
+      statusEl.textContent = "Conectando con Firebase...";
 
-      try {
-        const endpoint = `${baseUrl}/setlists.json`;
-        const res = await fetch(endpoint, { cache: 'no-store' });
-
-        if (!res.ok) {
-          throw new Error(`HTTP ${res.status} (Revisa las reglas .read/.write en Firebase)`);
-        }
-
-        const existingData = await res.json();
-        localStorage.setItem(FIREBASE_URL_STORAGE_KEY, baseUrl);
-        updateFirebaseMenuIndicator();
-
-        if (existingData === null || !existingData.bands) {
-          const uploaded = await pushToFirebase(baseUrl, true);
-          if (uploaded) {
-            fb.textContent = "Conexión correcta. Base de datos inicializada con tus repertorios actuales.";
-            fb.className = "text-[11px] rounded-lg p-2 border border-emerald-500/40 bg-emerald-500/10 text-emerald-300";
-            fb.classList.remove('hidden');
-            showToast("Firebase conectado e inicializado");
-          } else {
-            throw new Error("Lectura OK, pero sin permiso de escritura (.write: true)");
-          }
-        } else {
-          fb.textContent = "Conexión correcta. Se encontraron repertorios guardados en Firebase.";
-          fb.className = "text-[11px] rounded-lg p-2 border border-emerald-500/40 bg-emerald-500/10 text-emerald-300";
-          fb.classList.remove('hidden');
-          showToast("Firebase conectado correctamente");
-        }
-      } catch (err) {
-        fb.textContent = `No se pudo conectar: ${err.message}`;
-        fb.className = "text-[11px] rounded-lg p-2 border border-rose-500/40 bg-rose-500/10 text-rose-300";
-        fb.classList.remove('hidden');
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = `<span>Guardar y probar</span>`;
+      const synced = await syncFromFirebase(false);
+      if (synced) {
+        statusEl.className = "text-[11px] text-emerald-400";
+        statusEl.textContent = "Conectado y sincronizado con Firebase.";
+        setTimeout(() => closeFirebaseModal(), 700);
+      } else {
+        statusEl.className = "text-[11px] text-emerald-400";
+        statusEl.textContent = "URL guardada. Base de datos vacía; pulsa Guardar para subir los datos iniciales.";
+        setTimeout(() => closeFirebaseModal(), 1100);
       }
     }
 
-    // GUARDAR EN FIREBASE REALTIME DATABASE (PUT /setlists.json)
-    async function pushToFirebase(overrideUrl = null, silentToast = false) {
-      const baseUrl = overrideUrl || getActiveFirebaseUrl();
+    // SINCRONIZACIÓN CON FIREBASE REALTIME DATABASE
+    async function syncFromFirebase(notify = false) {
+      const baseUrl = getFirebaseBaseUrl();
       if (!baseUrl) return false;
-      if (isSavingToFirebase) return false;
 
-      isSavingToFirebase = true;
-      const badge = document.getElementById('saveStatusBadge');
-      if (badge) {
-        badge.textContent = "Sincronizando...";
-        badge.className = "text-[10px] sm:text-xs font-semibold px-2 py-1 rounded-md border border-cyan-500/40 bg-cyan-500/10 text-cyan-300 transition-colors whitespace-nowrap";
-      }
-
+      setSyncingStatus("Cargando...");
       try {
-        const endpoint = `${baseUrl}/setlists.json`;
-        const payloadObj = {
-          version: "2.0",
-          updatedAt: new Date().toISOString(),
-          activeBand: currentBandKey,
-          bands: appData.bands
-        };
+        const res = await fetch(`${baseUrl}/setlists.json?_t=${Date.now()}`, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const parsed = await res.json();
 
-        const putRes = await fetch(endpoint, {
+        if (isValidAppData(parsed)) {
+          const prevBand = currentBandKey;
+          appData = parsed;
+          if (appData.bands[prevBand]) {
+            appData.activeBand = prevBand;
+          }
+          localStorage.setItem('BAND_SETLIST_DATA_V2', JSON.stringify(appData));
+          applyLoadedData();
+          isModified = false;
+          setModifiedStatus(false);
+          if (notify) showToast("Sincronizado desde Firebase.");
+          return true;
+        } else {
+          setModifiedStatus(isModified);
+          if (notify) showToast("Firebase aún no tiene datos guardados. Pulsa Guardar para subirlos.");
+          return false;
+        }
+      } catch (err) {
+        setModifiedStatus(isModified);
+        if (notify) showToast("No se pudo conectar con Firebase. Revisa las reglas o la conexión.");
+        return false;
+      }
+    }
+
+    async function pushToFirebase() {
+      const baseUrl = getFirebaseBaseUrl();
+      if (!baseUrl) return false;
+
+      setSyncingStatus("Guardando...");
+      try {
+        const res = await fetch(`${baseUrl}/setlists.json`, {
           method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(payloadObj)
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(appData)
         });
-
-        if (!putRes.ok) {
-          throw new Error(`HTTP ${putRes.status}`);
-        }
-
-        isModified = false;
-        setModifiedStatus(false);
-        if (!silentToast) {
-          showToast("Guardado en el navegador y en Firebase");
-        }
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return true;
       } catch (err) {
-        console.error("Error subiendo a Firebase:", err);
-        setModifiedStatus(true);
-        if (!silentToast) {
-          showToast(`Guardado local, pero falló Firebase (${err.message})`, "error");
-        }
+        console.error("Error guardando en Firebase:", err);
         return false;
-      } finally {
-        isSavingToFirebase = false;
       }
     }
 
-    // CARGAR DESDE FIREBASE REALTIME DATABASE (GET /setlists.json)
-    async function syncFromFirebase(isSilentAutoLoad = false) {
-      const baseUrl = getActiveFirebaseUrl();
-      if (!baseUrl) {
-        if (!isSilentAutoLoad) {
+    // INICIALIZACIÓN
+    window.addEventListener('DOMContentLoaded', async () => {
+      const hasLocal = loadInitialData();
+      applyLoadedData();
+      setModifiedStatus(false);
+
+      // Si hay Firebase configurado, intenta traer siempre la última versión de la nube
+      const synced = await syncFromFirebase(false);
+      // Si Firebase no tenía datos y tampoco había datos locales, intenta cargar ./setlists.json
+      if (!synced && !hasLocal) {
+        await loadFromServerJson(false);
+      }
+
+      document.addEventListener('click', (e) => {
+        const menu = document.getElementById('actionMenu');
+        const btn = document.getElementById('menuToggleBtn');
+        if (!menu.contains(e.target) && !btn.contains(e.target)) {
           hideDropdownMenu();
-          openFirebaseModal();
-          showToast("Configura primero la URL de Firebase", "warning");
-        }
-        return;
-      }
-
-      if (!isSilentAutoLoad) {
-        hideDropdownMenu();
-        if (isModified) {
-          const ok = await openConfirmDialog(
-            "Sincronizar desde Firebase",
-            "Tienes cambios sin guardar. Si descargas los datos de Firebase se sobrescribirán tus listas actuales (podrás volver atrás con Deshacer). ¿Continuar?"
-          );
-          if (!ok) return;
-        }
-      }
-
-      try {
-        const endpoint = `${baseUrl}/setlists.json?_t=${Date.now()}`;
-        const res = await fetch(endpoint, { cache: 'no-store' });
-
-        if (!res.ok) {
-          if (!isSilentAutoLoad) {
-            showToast(`No se pudo descargar de Firebase (HTTP ${res.status})`, "warning");
-          }
-          return;
-        }
-
-        const remoteData = await res.json();
-        if (!remoteData || !remoteData.bands) {
-          // Si Firebase está vacío (primer uso), mantenemos los datos locales por defecto sin error
-          if (!isSilentAutoLoad) {
-            showToast("Firebase aún no tiene repertorios guardados. Pulsa Guardar para subir los actuales.", "warning");
-          }
-          return;
-        }
-
-        if (!isSilentAutoLoad) {
-          pushUndoSnapshot();
-        }
-
-        applyImportedAppData(remoteData);
-        localStorage.setItem(LOCAL_DATA_KEY, JSON.stringify(appData));
-        isModified = false;
-        setModifiedStatus(false);
-
-        showToast(isSilentAutoLoad ? "Sincronizado con Firebase" : "Repertorios actualizados desde Firebase");
-      } catch (err) {
-        console.error("Error leyendo desde Firebase:", err);
-        if (!isSilentAutoLoad) {
-          showToast("Error de conexión con Firebase", "error");
-        }
-      }
-    }
-
-    // CARGAR ARCHIVO ESTÁTICO ./setlists.json DEL SERVIDOR
-    async function syncFromStaticServerJson(isSilentAutoLoad = false) {
-      if (!isSilentAutoLoad) {
-        hideDropdownMenu();
-        if (isModified) {
-          const ok = await openConfirmDialog(
-            "Cargar ./setlists.json del servidor",
-            "Tienes cambios sin guardar. Si cargas setlists.json del servidor se reemplazarán tus listas actuales (puedes revertirlo con Deshacer). ¿Continuar?"
-          );
-          if (!ok) return;
-        }
-      }
-
-      try {
-        const response = await fetch('./setlists.json?_t=' + Date.now(), { cache: 'no-store' });
-        if (!response.ok) {
-          if (!isSilentAutoLoad) {
-            showToast("No se encontró ./setlists.json en la carpeta del servidor.", "warning");
-          }
-          return;
-        }
-        const remoteData = await response.json();
-        if (!remoteData || !remoteData.bands) {
-          if (!isSilentAutoLoad) {
-            showToast("El archivo ./setlists.json no tiene un formato válido.", "error");
-          }
-          return;
-        }
-
-        if (!isSilentAutoLoad) {
-          pushUndoSnapshot();
-        }
-
-        applyImportedAppData(remoteData);
-        localStorage.setItem(LOCAL_DATA_KEY, JSON.stringify(appData));
-        isModified = false;
-        setModifiedStatus(false);
-        showToast("Repertorios cargados desde ./setlists.json");
-      } catch (e) {
-        if (!isSilentAutoLoad) {
-          showToast("No se pudo acceder a ./setlists.json en el servidor.", "warning");
-        }
-      }
-    }
-
-    function applyImportedAppData(remoteData) {
-      appData = {
-        activeBand: remoteData.activeBand || currentBandKey || "april_crew",
-        bands: remoteData.bands
-      };
-
-      Object.keys(BAND_DATA).forEach(bKey => {
-        if (!appData.bands[bKey]) {
-          appData.bands[bKey] = {
-            activeSetlistId: "default_" + bKey,
-            setlists: {
-              ["default_" + bKey]: {
-                name: "Repertorio Principal",
-                tracks: JSON.parse(JSON.stringify(BAND_DATA[bKey].defaultSetlist))
-              }
-            }
-          };
         }
       });
 
-      currentBandKey = appData.activeBand;
-      document.getElementById('bandSelect').value = currentBandKey;
-      renderBandVisuals();
-      populateSetlistDropdown();
-      renderTrackList();
-      updateMetrics();
-
-      if (!document.getElementById('setlistsModal').classList.contains('hidden')) {
-        renderModalSetlists();
-      }
-    }
-
-    // PILA DE HISTORIAL PARA DESHACER (UNDO)
-    function pushUndoSnapshot() {
-      if (!appData) return;
-      try {
-        const snapshot = JSON.stringify({
-          currentBandKey: currentBandKey,
-          appData: appData
-        });
-        if (undoStack.length > 0 && undoStack[undoStack.length - 1] === snapshot) {
-          return;
+      document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !e.shiftKey) {
+          const tag = document.activeElement ? document.activeElement.tagName : '';
+          if (tag !== 'INPUT' && tag !== 'TEXTAREA') {
+            e.preventDefault();
+            undoLastAction();
+          }
         }
-        undoStack.push(snapshot);
-        if (undoStack.length > MAX_UNDO_HISTORY) {
-          undoStack.shift();
-        }
-        updateUndoButtonUI();
-      } catch (e) {
-        console.error("No se pudo guardar historial:", e);
-      }
-    }
-
-    function undoLastAction() {
-      if (undoStack.length === 0) return;
-      try {
-        const prevRaw = undoStack.pop();
-        const prevState = JSON.parse(prevRaw);
-        appData = prevState.appData;
-        currentBandKey = prevState.currentBandKey || appData.activeBand || "april_crew";
-        appData.activeBand = currentBandKey;
-
-        document.getElementById('bandSelect').value = currentBandKey;
-        renderBandVisuals();
-        populateSetlistDropdown();
-        renderTrackList();
-        updateMetrics();
-        markAsModified();
-        updateUndoButtonUI();
-
-        if (!document.getElementById('setlistsModal').classList.contains('hidden')) {
-          renderModalSetlists();
-        }
-        showToast("Último cambio deshecho", "warning");
-      } catch (e) {
-        console.error("Error al deshacer:", e);
-      }
-    }
-
-    function updateUndoButtonUI() {
-      const btn = document.getElementById('undoBtn');
-      if (!btn) return;
-      if (undoStack.length > 0) {
-        btn.disabled = false;
-        btn.className = "bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/40 text-xs font-medium px-2 py-1.5 rounded-lg flex items-center gap-1 active:scale-95 transition cursor-pointer";
-        btn.title = `Deshacer último cambio (${undoStack.length} disponible${undoStack.length > 1 ? 's' : ''}) - Ctrl+Z`;
-      } else {
-        btn.disabled = true;
-        btn.className = "bg-slate-800/50 text-slate-600 border border-slate-800 text-xs font-medium px-2 py-1.5 rounded-lg flex items-center gap-1 transition cursor-not-allowed";
-        btn.title = "Nada que deshacer";
-      }
-    }
+      });
+    });
 
     function loadInitialData() {
-      let hasStoredData = false;
-      const stored = localStorage.getItem(LOCAL_DATA_KEY);
+      const stored = localStorage.getItem('BAND_SETLIST_DATA_V2');
       if (stored) {
         try {
           const parsed = JSON.parse(stored);
-          if (parsed && parsed.bands) {
+          if (isValidAppData(parsed)) {
             appData = parsed;
-            hasStoredData = true;
+            return true;
           }
         } catch (e) {
           appData = null;
         }
       }
+      appData = getDefaultAppData();
+      return false;
+    }
 
-      if (!appData) {
-        appData = {
-          activeBand: "april_crew",
-          bands: {
-            april_crew: {
-              activeSetlistId: "repertorio_principal",
-              setlists: {
-                repertorio_principal: {
-                  name: "Repertorio Completo (21 temas)",
-                  tracks: JSON.parse(JSON.stringify(BAND_DATA.april_crew.defaultSetlist))
-                }
-              }
-            },
-            local_13: {
-              activeSetlistId: "repertorio_local13",
-              setlists: {
-                repertorio_local13: {
-                  name: "Lista Directo",
-                  tracks: JSON.parse(JSON.stringify(BAND_DATA.local_13.defaultSetlist))
-                }
-              }
-            },
-            underground_escape: {
-              activeSetlistId: "repertorio_ue",
-              setlists: {
-                repertorio_ue: {
-                  name: "Setlist Escape",
-                  tracks: JSON.parse(JSON.stringify(BAND_DATA.underground_escape.defaultSetlist))
-                }
-              }
-            }
-          }
-        };
-      }
-      currentBandKey = appData.activeBand || "april_crew";
+    function applyLoadedData() {
+      currentBandKey = (appData.activeBand && appData.bands[appData.activeBand]) ? appData.activeBand : "april_crew";
+      appData.activeBand = currentBandKey;
       document.getElementById('bandSelect').value = currentBandKey;
-      return hasStoredData;
+      renderBandVisuals();
+      populateSetlistDropdown();
+      renderTrackList();
+      updateMetrics();
+      updateUndoButton();
     }
 
-    // DESCARGA E IMPORTACIÓN MANUAL DE BACKUP JSON
-    function downloadServerJson() {
-      hideDropdownMenu();
+    // GESTIÓN DEL HISTORIAL DESHACER (UNDO)
+    function pushUndoState() {
+      if (!appData) return;
+      undoStack.push(JSON.stringify(appData));
+      if (undoStack.length > MAX_UNDO_STEPS) {
+        undoStack.shift();
+      }
+      updateUndoButton();
+    }
+
+    function undoLastAction() {
+      if (undoStack.length === 0) return;
+      const previousJson = undoStack.pop();
       try {
-        const exportPayload = {
-          version: "2.0",
-          updatedAt: new Date().toISOString(),
-          activeBand: currentBandKey,
-          bands: appData.bands
-        };
-        const jsonStr = JSON.stringify(exportPayload, null, 2);
-        const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'setlists.json';
-        a.click();
-        URL.revokeObjectURL(url);
-        showToast("Archivo setlists.json descargado");
+        appData = JSON.parse(previousJson);
+        renamingSetlistId = null;
+        applyLoadedData();
+        if (!document.getElementById('setlistsModal').classList.contains('hidden')) {
+          renderModalSetlists();
+        }
+        markAsModified();
+        showToast("Último cambio deshecho");
       } catch (e) {
-        showToast("Error al generar setlists.json", "error");
+        console.error("Error al deshacer:", e);
       }
+      updateUndoButton();
     }
 
-    function triggerJsonBackupImport() {
+    function updateUndoButton() {
+      const btn = document.getElementById('undoBtn');
+      if (!btn) return;
+      btn.disabled = undoStack.length === 0;
+      btn.title = undoStack.length > 0
+        ? `Deshacer último cambio (${undoStack.length} disponibles)`
+        : "Nada que deshacer";
+    }
+
+    function showToast(msg) {
+      const banner = document.getElementById('toastBanner');
+      banner.textContent = msg;
+      banner.classList.remove('hidden');
+      clearTimeout(banner._timer);
+      banner._timer = setTimeout(() => {
+        banner.classList.add('hidden');
+      }, 2800);
+    }
+
+    // ARCHIVO MAESTRO setlists.json (RESPALDO LOCAL / SERVIDOR)
+    async function loadFromServerJson(notify = false) {
+      try {
+        const res = await fetch('./setlists.json?_t=' + Date.now(), { cache: 'no-store' });
+        if (!res.ok) throw new Error('No disponible');
+        const parsed = await res.json();
+        if (isValidAppData(parsed)) {
+          if (notify) pushUndoState();
+          appData = parsed;
+          localStorage.setItem('BAND_SETLIST_DATA_V2', JSON.stringify(appData));
+          applyLoadedData();
+          isModified = false;
+          setModifiedStatus(false);
+          if (notify) showToast("Cargado desde ./setlists.json");
+          return true;
+        }
+      } catch (err) {
+        if (notify) {
+          showToast("No se encontró ./setlists.json en la carpeta de la web.");
+        }
+      }
+      return false;
+    }
+
+    function downloadMasterJson() {
       hideDropdownMenu();
-      const input = document.getElementById('jsonFileInput');
-      if (input) {
-        input.value = '';
-        input.click();
-      }
+      const jsonStr = JSON.stringify(appData, null, 2);
+      const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'setlists.json';
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast("Descargado setlists.json (copia de seguridad)");
     }
 
-    function handleJsonBackupSelected(e) {
-      const file = e.target.files && e.target.files[0];
-      if (!file) return;
+    function triggerJsonImport() {
+      hideDropdownMenu();
+      document.getElementById('jsonFileInput').value = '';
+      document.getElementById('jsonFileInput').click();
+    }
 
+    function handleJsonFileSelected(e) {
+      const file = e.target.files[0];
+      if (!file) return;
       const reader = new FileReader();
       reader.onload = (event) => {
         try {
           const parsed = JSON.parse(event.target.result);
-          if (!parsed || !parsed.bands) {
-            showToast("El archivo JSON no contiene repertorios válidos.", "error");
+          if (!isValidAppData(parsed)) {
+            alert("El archivo JSON no tiene el formato válido de Setlist Manager.");
             return;
           }
-
-          pushUndoSnapshot();
-          applyImportedAppData(parsed);
+          pushUndoState();
+          appData = parsed;
+          applyLoadedData();
           markAsModified();
-          showToast("Copia de seguridad JSON importada");
+          showToast("Repertorios importados desde JSON. Pulsa Guardar para subir a Firebase.");
         } catch (err) {
-          showToast("Error al leer el archivo JSON.", "error");
+          alert("Error al leer el archivo JSON.");
         }
       };
       reader.readAsText(file);
@@ -982,7 +877,8 @@
     }
 
     function changeBand(bandKey) {
-      if (!BAND_DATA[bandKey]) return;
+      if (!BAND_DATA[bandKey] || bandKey === currentBandKey) return;
+      pushUndoState();
       currentBandKey = bandKey;
       appData.activeBand = bandKey;
       
@@ -1007,40 +903,45 @@
       }
     }
 
-    // CONTROL DE ESTADO MANUAL Y GUARDADO (LOCAL + FIREBASE)
+    // CONTROL DE ESTADO Y GUARDADO (LOCAL + FIREBASE)
     function markAsModified() {
       isModified = true;
       setModifiedStatus(true);
     }
 
+    function setSyncingStatus(label) {
+      const badge = document.getElementById('saveStatusBadge');
+      badge.textContent = label;
+      badge.className = "text-[10px] sm:text-xs font-semibold px-1.5 sm:px-2 py-0.5 rounded border border-sky-500/40 bg-sky-500/10 text-sky-300 transition-colors animate-pulse";
+    }
+
     function setModifiedStatus(modified) {
       const badge = document.getElementById('saveStatusBadge');
-      if (!badge) return;
       if (modified) {
         badge.textContent = "Modificado";
-        badge.className = "text-[10px] sm:text-xs font-semibold px-2 py-1 rounded-md border border-amber-500/40 bg-amber-500/10 text-amber-400 transition-colors animate-pulse whitespace-nowrap";
+        badge.className = "text-[10px] sm:text-xs font-semibold px-1.5 sm:px-2 py-0.5 rounded border border-amber-500/40 bg-amber-500/10 text-amber-400 transition-colors animate-pulse";
       } else {
         badge.textContent = "Guardado";
-        badge.className = "text-[10px] sm:text-xs font-semibold px-2 py-1 rounded-md border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 transition-colors whitespace-nowrap";
+        badge.className = "text-[10px] sm:text-xs font-semibold px-1.5 sm:px-2 py-0.5 rounded border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 transition-colors";
       }
     }
 
     async function saveManual() {
       try {
-        localStorage.setItem(LOCAL_DATA_KEY, JSON.stringify(appData));
+        localStorage.setItem('BAND_SETLIST_DATA_V2', JSON.stringify(appData));
       } catch (err) {
-        console.error("Error al guardar en el navegador:", err);
-        showToast("Error al guardar en el navegador", "error");
+        alert("Error al guardar en el navegador.");
         return;
       }
 
-      const fbUrl = getActiveFirebaseUrl();
-      if (fbUrl) {
-        await pushToFirebase(fbUrl, false);
-      } else {
+      const ok = await pushToFirebase();
+      if (ok) {
         isModified = false;
         setModifiedStatus(false);
-        showToast("Guardado localmente");
+        showToast("Guardado en Firebase para toda la banda.");
+      } else {
+        setModifiedStatus(true);
+        showToast("Guardado en local, pero falló la subida a Firebase.");
       }
     }
 
@@ -1054,7 +955,7 @@
       Object.keys(bandObj.setlists).forEach(id => {
         const opt = document.createElement('option');
         opt.value = id;
-        opt.textContent = "📁 " + bandObj.setlists[id].name;
+        opt.textContent = bandObj.setlists[id].name;
         if (id === bandObj.activeSetlistId) opt.selected = true;
         select.appendChild(opt);
       });
@@ -1062,7 +963,8 @@
 
     function switchSetlist(setlistId) {
       const bandObj = appData.bands[currentBandKey];
-      if (bandObj && bandObj.setlists[setlistId]) {
+      if (bandObj && bandObj.setlists[setlistId] && bandObj.activeSetlistId !== setlistId) {
+        pushUndoState();
         bandObj.activeSetlistId = setlistId;
         renderTrackList();
         updateMetrics();
@@ -1085,23 +987,21 @@
 
       tracks.forEach((track, index) => {
         const row = document.createElement('div');
-        row.className = "track-item group flex items-start gap-1.5 sm:gap-2 p-2 rounded-lg bg-slate-900/60 hover:bg-slate-800/80 border border-slate-800/80 transition-colors duration-150 relative";
+        row.className = "track-item group flex items-start gap-1 sm:gap-2 p-1.5 sm:p-2 rounded-lg bg-slate-900/60 hover:bg-slate-800/80 border border-slate-800/80 transition-colors duration-150 relative";
         row.dataset.id = track.id;
         row.dataset.index = index;
 
         row.innerHTML = `
-          <!-- Agarrador y Controles compactos -->
           <div class="flex items-center gap-1 sm:gap-1.5 pt-0.5 shrink-0">
             <button class="drag-handle touch-none cursor-grab active:cursor-grabbing text-slate-500 hover:text-slate-300 p-0.5 no-print" title="Arrastrar para mover">
               <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M7 2a2 2 0 10.001 4.001A2 2 0 007 2zm0 6a2 2 0 10.001 4.001A2 2 0 007 8zm0 6a2 2 0 10.001 4.001A2 2 0 007 14zm6-12a2 2 0 10.001 4.001A2 2 0 0013 2zm0 6a2 2 0 10.001 4.001A2 2 0 0013 8zm0 6a2 2 0 10.001 4.001A2 2 0 0013 14z"></path></svg>
             </button>
             <span class="text-[10px] sm:text-xs font-mono font-bold text-slate-500 w-4 sm:w-5 text-right">${index + 1}</span>
-            <input type="checkbox" ${track.checked ? 'checked' : ''} onchange="toggleTrackChecked(${track.id})" class="w-4 h-4 rounded bg-slate-800 border-slate-700 text-emerald-500 focus:ring-0 cursor-pointer no-print">
+            <input type="checkbox" ${track.checked ? 'checked' : ''} onchange="toggleTrackChecked(${track.id})" class="w-4 h-4 rounded bg-slate-800 border-slate-700 text-emerald-500 focus:ring-0 focus:ring-offset-0 cursor-pointer no-print">
           </div>
 
-          <!-- Columna Central: Título (L1) y Duración + Artista (L2) -->
           <div class="flex-1 min-w-0 px-1 cursor-pointer" onclick="toggleTrackChecked(${track.id})">
-            <div class="text-xs sm:text-sm font-bold text-slate-100 group-hover:text-emerald-300 break-words leading-tight transition-colors ${!track.checked ? 'opacity-50 line-through' : ''}">
+            <div class="text-xs sm:text-sm font-bold text-slate-100 group-hover:text-emerald-300 break-words leading-tight transition-colors">
               ${escapeHtml(track.title)}
             </div>
             <div class="flex items-center gap-1.5 mt-0.5 text-[10px] sm:text-xs text-slate-400 break-words leading-snug">
@@ -1112,7 +1012,6 @@
             </div>
           </div>
 
-          <!-- Acciones Derecha (Editar / Borrar) -->
           <div class="flex items-center gap-1 shrink-0 pt-0.5 opacity-60 group-hover:opacity-100 transition-opacity no-print">
             <button onclick="event.stopPropagation(); openEditModal(${track.id})" class="text-slate-400 hover:text-emerald-400 p-1" title="Editar">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
@@ -1128,13 +1027,12 @@
       });
     }
 
-    // ARRASTRE TÁCTIL Y DE RATÓN (POINTER EVENTS)
+    // ARRASTRE TÁCTIL Y DE RATÓN UNIVERSAL
     let draggedRow = null;
     let dragIndex = -1;
 
     function setupDragEvents(row) {
       const handle = row.querySelector('.drag-handle');
-      if (!handle) return;
 
       handle.addEventListener('pointerdown', (e) => {
         draggedRow = row;
@@ -1180,7 +1078,7 @@
 
     function reorderTracks(fromIndex, toIndex) {
       if (fromIndex === toIndex) return;
-      pushUndoSnapshot();
+      pushUndoState();
       const tracks = [...getActiveTracks()];
       const [movedItem] = tracks.splice(fromIndex, 1);
       tracks.splice(toIndex, 0, movedItem);
@@ -1188,12 +1086,12 @@
       renderTrackList();
     }
 
-    // CHECKBOXES Y MÉTRICAS
+    // GESTIÓN DE CHECKBOXES Y MÉTRICAS
     function toggleTrackChecked(id) {
       const tracks = getActiveTracks();
       const track = tracks.find(t => t.id === id);
       if (track) {
-        pushUndoSnapshot();
+        pushUndoState();
         track.checked = !track.checked;
         markAsModified();
         renderTrackList();
@@ -1204,7 +1102,7 @@
     function toggleSelectAll(selectAll) {
       const tracks = getActiveTracks();
       if (!tracks.length) return;
-      pushUndoSnapshot();
+      pushUndoState();
       tracks.forEach(t => t.checked = selectAll);
       markAsModified();
       renderTrackList();
@@ -1233,7 +1131,6 @@
       document.getElementById('totalCountDisplay').textContent = `${tracks.length} temas en lista`;
     }
 
-    // FORMATEO DE TIEMPO
     function formatDuration(totalSeconds) {
       const sec = Math.max(0, parseInt(totalSeconds, 10) || 0);
       const m = Math.floor(sec / 60);
@@ -1261,7 +1158,6 @@
       return 0;
     }
 
-    // ACCIONES DE MENÚ
     function toggleDropdownMenu(e) {
       e.stopPropagation();
       const menu = document.getElementById('actionMenu');
@@ -1270,7 +1166,7 @@
 
     function hideDropdownMenu() {
       const menu = document.getElementById('actionMenu');
-      if (menu) menu.classList.add('hidden');
+      menu.classList.add('hidden');
     }
 
     // IMPORTACIÓN Y EXPORTACIÓN TXT
@@ -1284,7 +1180,7 @@
       const files = Array.from(e.target.files);
       if (!files.length) return;
 
-      pushUndoSnapshot();
+      pushUndoState();
       const bandObj = appData.bands[currentBandKey];
 
       files.forEach((file) => {
@@ -1307,7 +1203,6 @@
             renderTrackList();
             updateMetrics();
             markAsModified();
-            showToast(`Repertorio "${listName}" importado`);
           }
         };
         reader.readAsText(file);
@@ -1359,16 +1254,17 @@
       const bandObj = appData.bands[currentBandKey];
       const activeList = bandObj.setlists[bandObj.activeSetlistId];
       if (!activeList || !activeList.tracks.length) {
-        showToast("El repertorio actual está vacío", "warning");
+        alert("El repertorio actual está vacío.");
         return;
       }
 
+      const bandName = BAND_DATA[currentBandKey]?.name || "Banda";
       let txtContent = "";
       activeList.tracks.forEach(t => {
         const m = Math.floor(t.duration / 60);
         const s = t.duration % 60;
         const durStr = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
-        txtContent += `${t.title} - ${t.artist || BAND_DATA[currentBandKey].name} - ${durStr}\n`;
+        txtContent += `${t.title} - ${t.artist || bandName} - ${durStr}\n`;
       });
 
       const blob = new Blob([txtContent], { type: 'text/plain;charset=utf-8' });
@@ -1378,20 +1274,53 @@
       a.download = `${activeList.name.replace(/\s+/g, '_')}_setlist.txt`;
       a.click();
       URL.revokeObjectURL(url);
-      showToast("Archivo TXT exportado");
     }
 
-    // MODAL DE REPERTORIOS (Con edición de nombre inline)
+    // MODAL DE GESTIÓN Y RENOMBRADO DE REPERTORIOS
     function openSetlistsModal() {
       hideDropdownMenu();
-      editingSetlistId = null;
+      renamingSetlistId = null;
       renderModalSetlists();
       document.getElementById('setlistsModal').classList.remove('hidden');
     }
 
     function closeSetlistsModal() {
-      editingSetlistId = null;
+      renamingSetlistId = null;
       document.getElementById('setlistsModal').classList.add('hidden');
+    }
+
+    function startRenameSetlist(id) {
+      renamingSetlistId = id;
+      renderModalSetlists();
+      setTimeout(() => {
+        const inp = document.getElementById(`renameInput_${id}`);
+        if (inp) {
+          inp.focus();
+          inp.select();
+        }
+      }, 20);
+    }
+
+    function cancelRenameSetlist() {
+      renamingSetlistId = null;
+      renderModalSetlists();
+    }
+
+    function confirmRenameSetlist(id) {
+      const inp = document.getElementById(`renameInput_${id}`);
+      if (!inp) return;
+      const newName = inp.value.trim();
+      if (!newName) return;
+
+      const bandObj = appData.bands[currentBandKey];
+      if (bandObj && bandObj.setlists[id] && bandObj.setlists[id].name !== newName) {
+        pushUndoState();
+        bandObj.setlists[id].name = newName;
+        populateSetlistDropdown();
+        markAsModified();
+      }
+      renamingSetlistId = null;
+      renderModalSetlists();
     }
 
     function renderModalSetlists() {
@@ -1402,72 +1331,36 @@
       Object.keys(bandObj.setlists).forEach(id => {
         const item = bandObj.setlists[id];
         const isCurrent = id === bandObj.activeSetlistId;
-        const isEditing = editingSetlistId === id;
+        const isRenaming = id === renamingSetlistId;
 
         const div = document.createElement('div');
-        div.className = `flex items-center justify-between p-2 rounded-lg border gap-2 ${isCurrent ? 'border-emerald-500 bg-emerald-950/20' : 'border-slate-800 bg-slate-950/50'}`;
+        div.className = `flex items-center justify-between gap-2 p-2 rounded border ${isCurrent ? 'border-emerald-500 bg-emerald-950/20' : 'border-slate-800 bg-slate-950/50'}`;
 
-        if (isEditing) {
+        if (isRenaming) {
           div.innerHTML = `
-            <input type="text" id="renameInput_${id}" value="${escapeHtml(item.name)}" class="bg-slate-950 border border-emerald-500 rounded px-2 py-1 text-xs text-white flex-1 min-w-0 focus:outline-none" onkeydown="if(event.key==='Enter') confirmRenameSetlist('${id}'); if(event.key==='Escape') cancelRenameSetlist();">
+            <input type="text" id="renameInput_${id}" value="${escapeHtml(item.name)}" onkeydown="if(event.key==='Enter') confirmRenameSetlist('${id}'); if(event.key==='Escape') cancelRenameSetlist();" class="bg-slate-900 border border-emerald-500 rounded px-2 py-1 text-xs text-white flex-1 min-w-0 focus:outline-none">
             <div class="flex items-center gap-1 shrink-0">
-              <button onclick="confirmRenameSetlist('${id}')" class="px-2 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded text-[11px] font-medium">Guardar</button>
+              <button onclick="confirmRenameSetlist('${id}')" class="px-2 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded text-[11px] font-medium">OK</button>
               <button onclick="cancelRenameSetlist()" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-[11px]">Cancelar</button>
             </div>
           `;
         } else {
           div.innerHTML = `
-            <div class="truncate flex-1 min-w-0">
-              <span class="font-bold text-slate-200 block truncate" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</span>
+            <div class="min-w-0 flex-1">
+              <span class="font-bold text-slate-200 block truncate">${escapeHtml(item.name)}</span>
               <span class="text-[10px] text-slate-400 block">${item.tracks.length} temas</span>
             </div>
             <div class="flex items-center gap-1 shrink-0">
-              <button onclick="startRenameSetlist('${id}')" class="p-1 text-slate-400 hover:text-amber-400 transition" title="Renombrar repertorio">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+              ${!isCurrent ? `<button onclick="activateSetlistFromModal('${id}')" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-[11px]">Activar</button>` : '<span class="text-[10px] text-emerald-400 font-bold px-1">Activo</span>'}
+              <button onclick="startRenameSetlist('${id}')" class="p-1 text-slate-400 hover:text-emerald-400" title="Renombrar repertorio">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
               </button>
-              ${!isCurrent ? `<button onclick="activateSetlistFromModal('${id}')" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-[11px] transition">Activar</button>` : '<span class="text-[10px] text-emerald-400 font-bold px-1.5 py-0.5 rounded bg-emerald-950/60 border border-emerald-700/50">Activo</span>'}
-              ${Object.keys(bandObj.setlists).length > 1 ? `<button onclick="deleteSetlist('${id}')" class="p-1 text-slate-500 hover:text-rose-400 transition" title="Eliminar repertorio"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>` : ''}
+              ${Object.keys(bandObj.setlists).length > 1 ? `<button onclick="deleteSetlist('${id}')" class="p-1 text-slate-500 hover:text-rose-400" title="Eliminar repertorio"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>` : ''}
             </div>
           `;
         }
         container.appendChild(div);
       });
-
-      if (editingSetlistId) {
-        const inp = document.getElementById(`renameInput_${editingSetlistId}`);
-        if (inp) {
-          inp.focus();
-          inp.select();
-        }
-      }
-    }
-
-    function startRenameSetlist(id) {
-      editingSetlistId = id;
-      renderModalSetlists();
-    }
-
-    function cancelRenameSetlist() {
-      editingSetlistId = null;
-      renderModalSetlists();
-    }
-
-    function confirmRenameSetlist(id) {
-      const bandObj = appData.bands[currentBandKey];
-      const target = bandObj && bandObj.setlists[id];
-      const input = document.getElementById(`renameInput_${id}`);
-      if (!target || !input) return;
-
-      const newName = input.value.trim();
-      if (newName && newName !== target.name) {
-        pushUndoSnapshot();
-        target.name = newName;
-        populateSetlistDropdown();
-        markAsModified();
-        showToast("Repertorio renombrado");
-      }
-      editingSetlistId = null;
-      renderModalSetlists();
     }
 
     function activateSetlistFromModal(id) {
@@ -1481,7 +1374,7 @@
       const name = input.value.trim();
       if (!name) return;
 
-      pushUndoSnapshot();
+      pushUndoState();
       const bandObj = appData.bands[currentBandKey];
       const newId = 'list_' + Date.now();
       bandObj.setlists[newId] = {
@@ -1496,20 +1389,14 @@
       renderTrackList();
       updateMetrics();
       markAsModified();
-      showToast(`Repertorio "${name}" creado`);
     }
 
-    async function deleteSetlist(id) {
+    function deleteSetlist(id) {
       const bandObj = appData.bands[currentBandKey];
       if (Object.keys(bandObj.setlists).length <= 1) return;
+      if (!confirm("¿Eliminar este repertorio?")) return;
 
-      const ok = await openConfirmDialog(
-        "Eliminar repertorio",
-        `¿Seguro que quieres eliminar "${bandObj.setlists[id].name}"? (Podrás revertirlo con Deshacer).`
-      );
-      if (!ok) return;
-
-      pushUndoSnapshot();
+      pushUndoState();
       delete bandObj.setlists[id];
       if (bandObj.activeSetlistId === id) {
         bandObj.activeSetlistId = Object.keys(bandObj.setlists)[0];
@@ -1519,7 +1406,6 @@
       renderTrackList();
       updateMetrics();
       markAsModified();
-      showToast("Repertorio eliminado", "warning");
     }
 
     // MODAL DE EDICIÓN Y NUEVO TEMA
@@ -1530,7 +1416,6 @@
       document.getElementById('editArtistInput').value = "";
       document.getElementById('editDurationInput').value = "03:30";
       document.getElementById('editModal').classList.remove('hidden');
-      setTimeout(() => document.getElementById('editTitleInput').focus(), 50);
     }
 
     function openEditModal(id) {
@@ -1558,11 +1443,11 @@
       const durationStr = document.getElementById('editDurationInput').value;
 
       if (!title) {
-        showToast("Escribe un título para el tema", "warning");
+        alert("Escribe un título.");
         return;
       }
 
-      pushUndoSnapshot();
+      pushUndoState();
       const duration = parseDurationString(durationStr);
       const tracks = [...getActiveTracks()];
 
@@ -1590,7 +1475,7 @@
     }
 
     function deleteTrack(id) {
-      pushUndoSnapshot();
+      pushUndoState();
       const tracks = getActiveTracks().filter(t => t.id !== id);
       setActiveTracks(tracks);
       renderTrackList();
