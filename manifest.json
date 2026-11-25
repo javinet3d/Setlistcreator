@@ -2,7 +2,7 @@
   "id": "./index.html",
   "name": "Setlist Manager",
   "short_name": "Setlist",
-  "description": "Gestor de repertorios en directo para April Crew, Local 13 y Underground Escape",
+  "description": "Gestor de repertorios en directo con soporte offline y sincronización en la nube",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

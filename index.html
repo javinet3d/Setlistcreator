@@ -13,7 +13,7 @@
   <link rel="manifest" href="./manifest.json">
   <link rel="apple-touch-icon" href="./icon-192.png">
   <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230A0F1D'/%3E%3Ccircle cx='11' cy='21' r='3' fill='%23FFAB00'/%3E%3Cpath d='M14 10v11' stroke='%23FFAB00' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M8 10h12M8 15h8' stroke='%23FFAB00' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%2300d2ff'/%3E%3Cstop offset='50%25' stop-color='%23ff4b7d'/%3E%3Cstop offset='100%25' stop-color='%23ffb800'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Crect x='5' y='9' width='9' height='2.4' rx='1.2' fill='%23ffe640'/%3E%3Crect x='5' y='14' width='7.5' height='2.4' rx='1.2' fill='%2310ebaf'/%3E%3Ccircle cx='14' cy='23' r='3' fill='%23ffffff'/%3E%3Ccircle cx='23' cy='21' r='3' fill='%23ffffff'/%3E%3Cpath d='M16.2 9v14M25.2 7v14M16.2 9l9-2' stroke='%23ffffff' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @media print {
@@ -60,8 +60,8 @@
           <span class="hidden sm:inline">Instalar</span>
         </button>
 
-        <!-- Estado de Guardado / Sincronización -->
-        <span id="saveStatusBadge" class="text-[10px] sm:text-xs font-semibold px-1.5 sm:px-2 py-0.5 rounded border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 transition-colors">
+        <!-- Estado de Guardado / Sincronización / Offline -->
+        <span id="saveStatusBadge" class="text-[10px] sm:text-xs font-semibold px-1.5 sm:px-2 py-0.5 rounded border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 transition-colors whitespace-nowrap">
           Guardado
         </span>
 
@@ -540,10 +540,14 @@
       }
     };
 
-    // ESTADO DE LA APLICACIÓN E HISTORIAL DESHACER
+    // ESTADO DE LA APLICACIÓN, OFFLINE-FIRST E HISTORIAL DESHACER
+    const LOCAL_DATA_STORAGE_KEY = "BAND_SETLIST_DATA_V2";
+    const PENDING_SYNC_STORAGE_KEY = "BAND_SETLIST_PENDING_CLOUD_SYNC_V1";
     let currentBandKey = "april_crew";
     let appData = null;
     let isModified = false;
+    let pendingCloudSync = localStorage.getItem(PENDING_SYNC_STORAGE_KEY) === "1";
+    let isSyncingNow = false;
     let undoStack = [];
     const MAX_UNDO_STEPS = 30;
     let renamingSetlistId = null;
@@ -638,10 +642,41 @@
       }
     }
 
-    // SINCRONIZACIÓN CON FIREBASE REALTIME DATABASE
+    function setPendingCloudSync(flag) {
+      pendingCloudSync = !!flag;
+      if (pendingCloudSync) {
+        localStorage.setItem(PENDING_SYNC_STORAGE_KEY, "1");
+      } else {
+        localStorage.removeItem(PENDING_SYNC_STORAGE_KEY);
+      }
+    }
+
+    function persistLocalImmediately() {
+      try {
+        localStorage.setItem(LOCAL_DATA_STORAGE_KEY, JSON.stringify(appData));
+        return true;
+      } catch (err) {
+        console.error("Error guardando en localStorage:", err);
+        return false;
+      }
+    }
+
+    // SINCRONIZACIÓN CON FIREBASE REALTIME DATABASE (CON COLA OFFLINE)
     async function syncFromFirebase(notify = false) {
       const baseUrl = getFirebaseBaseUrl();
       if (!baseUrl) return false;
+
+      if (!navigator.onLine) {
+        updateStatusBadge();
+        if (notify) showToast("Sin conexión: trabajando con copia local.");
+        return false;
+      }
+
+      // Si hay cambios locales pendientes de subir, primero los subimos para no perderlos
+      if (pendingCloudSync) {
+        const flushed = await flushPendingCloudSync(notify);
+        if (flushed) return true;
+      }
 
       setSyncingStatus("Cargando...");
       try {
@@ -655,29 +690,30 @@
           if (appData.bands[prevBand]) {
             appData.activeBand = prevBand;
           }
-          localStorage.setItem('BAND_SETLIST_DATA_V2', JSON.stringify(appData));
+          persistLocalImmediately();
           applyLoadedData();
           isModified = false;
-          setModifiedStatus(false);
+          setPendingCloudSync(false);
+          updateStatusBadge();
           if (notify) showToast("Sincronizado desde Firebase.");
           return true;
         } else {
-          setModifiedStatus(isModified);
+          updateStatusBadge();
           if (notify) showToast("Firebase aún no tiene datos guardados. Pulsa Guardar para subirlos.");
           return false;
         }
       } catch (err) {
-        setModifiedStatus(isModified);
-        if (notify) showToast("No se pudo conectar con Firebase. Revisa las reglas o la conexión.");
+        updateStatusBadge();
+        if (notify) showToast("Sin conexión con Firebase. Usando datos guardados en el dispositivo.");
         return false;
       }
     }
 
     async function pushToFirebase() {
       const baseUrl = getFirebaseBaseUrl();
-      if (!baseUrl) return false;
+      if (!baseUrl || !navigator.onLine) return false;
 
-      setSyncingStatus("Guardando...");
+      setSyncingStatus("Subiendo...");
       try {
         const res = await fetch(`${baseUrl}/setlists.json`, {
           method: 'PUT',
@@ -692,17 +728,62 @@
       }
     }
 
+    async function flushPendingCloudSync(notify = false) {
+      if (!pendingCloudSync || isSyncingNow || !navigator.onLine) return false;
+      isSyncingNow = true;
+      try {
+        const ok = await pushToFirebase();
+        if (ok) {
+          setPendingCloudSync(false);
+          isModified = false;
+          updateStatusBadge();
+          if (notify) showToast("Conexión recuperada: cambios sincronizados con Firebase.");
+          return true;
+        } else {
+          updateStatusBadge();
+          return false;
+        }
+      } finally {
+        isSyncingNow = false;
+      }
+    }
+
     // INICIALIZACIÓN
     window.addEventListener('DOMContentLoaded', async () => {
       const hasLocal = loadInitialData();
       applyLoadedData();
-      setModifiedStatus(false);
+      updateStatusBadge();
 
-      // Si hay Firebase configurado, intenta traer siempre la última versión de la nube
-      const synced = await syncFromFirebase(false);
-      // Si Firebase no tenía datos y tampoco había datos locales, intenta cargar ./setlists.json
-      if (!synced && !hasLocal) {
-        await loadFromServerJson(false);
+      // Recuperar conexión automáticamente cuando vuelve Internet o al volver a la app
+      window.addEventListener('online', () => {
+        updateStatusBadge();
+        if (pendingCloudSync) {
+          flushPendingCloudSync(true);
+        } else {
+          showToast("Conexión recuperada.");
+        }
+      });
+
+      window.addEventListener('offline', () => {
+        updateStatusBadge();
+        showToast("Modo sin conexión: tus cambios se guardarán en el dispositivo.");
+      });
+
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && navigator.onLine && pendingCloudSync) {
+          flushPendingCloudSync(true);
+        }
+      });
+
+      if (navigator.onLine) {
+        if (pendingCloudSync) {
+          await flushPendingCloudSync(true);
+        } else {
+          const synced = await syncFromFirebase(false);
+          if (!synced && !hasLocal) {
+            await loadFromServerJson(false);
+          }
+        }
       }
 
       document.addEventListener('click', (e) => {
@@ -903,45 +984,73 @@
       }
     }
 
-    // CONTROL DE ESTADO Y GUARDADO (LOCAL + FIREBASE)
+    // CONTROL DE ESTADO Y GUARDADO (OFFLINE-FIRST LOCAL + NUBE AUTOMÁTICA)
     function markAsModified() {
       isModified = true;
-      setModifiedStatus(true);
+      // Persistimos inmediatamente en localStorage para que nunca se pierda nada offline
+      persistLocalImmediately();
+      setPendingCloudSync(true);
+      updateStatusBadge();
     }
 
     function setSyncingStatus(label) {
       const badge = document.getElementById('saveStatusBadge');
       badge.textContent = label;
-      badge.className = "text-[10px] sm:text-xs font-semibold px-1.5 sm:px-2 py-0.5 rounded border border-sky-500/40 bg-sky-500/10 text-sky-300 transition-colors animate-pulse";
+      badge.className = "text-[10px] sm:text-xs font-semibold px-1.5 sm:px-2 py-0.5 rounded border border-sky-500/40 bg-sky-500/10 text-sky-300 transition-colors animate-pulse whitespace-nowrap";
     }
 
-    function setModifiedStatus(modified) {
+    function updateStatusBadge() {
       const badge = document.getElementById('saveStatusBadge');
-      if (modified) {
-        badge.textContent = "Modificado";
-        badge.className = "text-[10px] sm:text-xs font-semibold px-1.5 sm:px-2 py-0.5 rounded border border-amber-500/40 bg-amber-500/10 text-amber-400 transition-colors animate-pulse";
+      if (!badge) return;
+      const online = navigator.onLine;
+
+      if (!online && pendingCloudSync) {
+        badge.textContent = "Local (Sin red)";
+        badge.title = "Guardado en el teléfono. Se subirá a Firebase al recuperar conexión.";
+        badge.className = "text-[10px] sm:text-xs font-semibold px-1.5 sm:px-2 py-0.5 rounded border border-amber-500/40 bg-amber-500/10 text-amber-300 transition-colors whitespace-nowrap";
+      } else if (!online) {
+        badge.textContent = "Offline";
+        badge.title = "Modo sin conexión activo";
+        badge.className = "text-[10px] sm:text-xs font-semibold px-1.5 sm:px-2 py-0.5 rounded border border-slate-600 bg-slate-800 text-slate-300 transition-colors whitespace-nowrap";
+      } else if (pendingCloudSync || isModified) {
+        badge.textContent = "Pendiente nube";
+        badge.title = "Guardado en local; pulsa Guardar para subir ahora a Firebase";
+        badge.className = "text-[10px] sm:text-xs font-semibold px-1.5 sm:px-2 py-0.5 rounded border border-amber-500/40 bg-amber-500/10 text-amber-400 transition-colors animate-pulse whitespace-nowrap";
       } else {
-        badge.textContent = "Guardado";
-        badge.className = "text-[10px] sm:text-xs font-semibold px-1.5 sm:px-2 py-0.5 rounded border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 transition-colors";
+        badge.textContent = "Sincronizado";
+        badge.title = "Guardado en local y sincronizado con Firebase";
+        badge.className = "text-[10px] sm:text-xs font-semibold px-1.5 sm:px-2 py-0.5 rounded border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 transition-colors whitespace-nowrap";
       }
     }
 
+    function setModifiedStatus(modified) {
+      isModified = !!modified;
+      updateStatusBadge();
+    }
+
     async function saveManual() {
-      try {
-        localStorage.setItem('BAND_SETLIST_DATA_V2', JSON.stringify(appData));
-      } catch (err) {
-        alert("Error al guardar en el navegador.");
+      if (!persistLocalImmediately()) {
+        alert("Error al guardar en el almacenamiento local.");
+        return;
+      }
+
+      if (!navigator.onLine) {
+        setPendingCloudSync(true);
+        updateStatusBadge();
+        showToast("Guardado en el dispositivo (offline). Se subirá a Firebase al volver Internet.");
         return;
       }
 
       const ok = await pushToFirebase();
       if (ok) {
         isModified = false;
-        setModifiedStatus(false);
+        setPendingCloudSync(false);
+        updateStatusBadge();
         showToast("Guardado en Firebase para toda la banda.");
       } else {
-        setModifiedStatus(true);
-        showToast("Guardado en local, pero falló la subida a Firebase.");
+        setPendingCloudSync(true);
+        updateStatusBadge();
+        showToast("Guardado en local. Se reintentará subir a Firebase automáticamente.");
       }
     }
 
